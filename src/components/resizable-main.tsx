@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Atom, Figma, PanelsTopLeft, Wallpaper, Wind } from 'lucide-react'
-
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { ScrollArea } from './ui/scroll-area'
 import { Separator } from './ui/separator'
+import { Card } from './ui/card'
+import { AspectRatio } from './ui/aspect-ratio'
 
 type SectionId = 'designs' | 'projects'
 
@@ -24,6 +24,7 @@ type WorkItem = {
       label: string
       icon: typeof Figma
    }>
+   aspectRatio: number
 }
 
 const workItems: WorkItem[] = [
@@ -38,6 +39,7 @@ const workItems: WorkItem[] = [
       embedUrl:
          'https://embed.figma.com/proto/zR7MV8n7ismhZS2bup8sMq/Virtual-Tour-App-for-Art-Gallery--Copy-?node-id=660-113&page-id=0%3A1&starting-point-node-id=660%3A113&scaling=scale-down-width&content-scaling=fixed&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
+      aspectRatio: 16 / 10.4,
    },
    {
       id: 'slicehaus-layout',
@@ -50,16 +52,20 @@ const workItems: WorkItem[] = [
       embedUrl:
          'https://embed.figma.com/proto/xuQnWFXgDs1Ilym2SvqmIl/Slicehaus--Community-?node-id=2003-22266&p=f&viewport=-144%2C-189%2C0.02&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=2003%3A22266&page-id=0%3A1&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
+      aspectRatio: 16 / 10.4,
    },
    {
       id: 'bondbook-layout',
       section: 'designs',
       category: 'Layouts',
       title: 'BondBook',
-      image: '/artsphere.png',
+      image: '/bondbook.png',
       alt: 'BondBook layout thumbnail',
       description: 'BondBook / School Project / 2026',
+      embedUrl:
+         'https://embed.figma.com/proto/QuentdTLxdNzwYDaEI2AL6/Pilar--John-Paul?node-id=943-2646&p=f&viewport=473%2C-79%2C0.09&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=943%3A2619&page-id=0%3A1&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
+      aspectRatio: 9 / 18.4,
    },
    {
       id: 'technoday-poster',
@@ -70,6 +76,7 @@ const workItems: WorkItem[] = [
       alt: 'Technoday poster thumbnail',
       description: 'Technoday / Event Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 1 / 1.41,
    },
    {
       id: 'whywait-poster',
@@ -83,6 +90,7 @@ const workItems: WorkItem[] = [
          { label: 'Figma', icon: Figma },
          { label: 'Photoshop', icon: Wallpaper },
       ],
+      aspectRatio: 16 / 9,
    },
    {
       id: 'resto-poster',
@@ -93,6 +101,7 @@ const workItems: WorkItem[] = [
       alt: 'Resto poster thumbnail',
       description: 'Resto / Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 16 / 9,
    },
    {
       id: 'jane-poster',
@@ -103,6 +112,7 @@ const workItems: WorkItem[] = [
       alt: 'Jane poster thumbnail',
       description: 'Jane / Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 16 / 9,
    },
    {
       id: 'never-happened-poster',
@@ -113,6 +123,7 @@ const workItems: WorkItem[] = [
       alt: 'Never Happened poster thumbnail',
       description: 'Never Happened / Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 2 / 3,
    },
    {
       id: 'juliana-poster',
@@ -123,6 +134,7 @@ const workItems: WorkItem[] = [
       alt: 'Juliana poster thumbnail',
       description: 'Juliana / Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 2 / 3,
    },
    {
       id: 'varre-poster',
@@ -136,6 +148,7 @@ const workItems: WorkItem[] = [
          { label: 'Figma', icon: Figma },
          { label: 'Photoshop', icon: Wallpaper },
       ],
+      aspectRatio: 4 / 5,
    },
    {
       id: 'cleanrasdasdot-poster',
@@ -146,6 +159,7 @@ const workItems: WorkItem[] = [
       alt: 'Cleanrot poster thumbnail',
       description: 'Cleanrot / Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 9 / 16,
    },
    {
       id: 'portfolio-app',
@@ -159,6 +173,7 @@ const workItems: WorkItem[] = [
          { label: 'React', icon: Atom },
          { label: 'Tailwind', icon: Wind },
       ],
+      aspectRatio: 9 / 16,
    },
 ]
 
@@ -179,17 +194,59 @@ function getItemsByCategory(items: WorkItem[]) {
 }
 
 function ItemPreview({ item }: { item: WorkItem }) {
+   const isPortrait = item.aspectRatio < 1
+
    return (
       <div className='flex h-full flex-col gap-4'>
          {item.embedUrl ? (
-            <iframe
-               className='min-h-[44em] rounded-lg border border-border bg-muted'
-               src={item.embedUrl}
-               title={item.title}
-            />
+            isPortrait ? (
+               <div className='flex justify-center'>
+                  <iframe
+                     className='rounded-lg'
+                     style={{
+                        height: '80vh',
+                        width: `calc(80vh * ${item.aspectRatio})`,
+                     }}
+                     src={item.embedUrl}
+                     title={item.title}
+                  />
+               </div>
+            ) : (
+               <div
+                  className='w-full overflow-hidden rounded-lg'
+                  style={{ aspectRatio: item.aspectRatio }}
+               >
+                  <iframe
+                     className='h-full w-full rounded-lg'
+                     src={item.embedUrl}
+                     title={item.title}
+                  />
+               </div>
+            )
+         ) : isPortrait ? (
+            // Portrait image: constrained by screen height, centered
+            <div className='flex justify-center'>
+               <img
+                  className='rounded-lg object-contain'
+                  style={{
+                     height: '80vh',
+                     width: `calc(80vh * ${item.aspectRatio})`,
+                  }}
+                  src={item.image}
+                  alt={item.alt}
+               />
+            </div>
          ) : (
-            <div className='flex min-h-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted'>
-               <img className='h-full w-full object-fill' src={item.image} alt={item.alt} />
+            // Landscape image: full width, height follows ratio
+            <div
+               className='w-full overflow-hidden rounded-lg'
+               style={{ aspectRatio: item.aspectRatio }}
+            >
+               <img
+                  className='h-full w-full object-cover rounded-lg'
+                  src={item.image}
+                  alt={item.alt}
+               />
             </div>
          )}
          <p className='text-lg font-medium pb-4'>{item.description}</p>
@@ -230,84 +287,69 @@ export function ResizableMain() {
    }
 
    return (
-      <div className='h-full overflow-hidden rounded-lg bg-background text-foreground shadow-xl'>
-         <ResizablePanelGroup orientation='horizontal'>
-            <ResizablePanel defaultSize='80%' maxSize='80%'>
-               <Tabs value={activeSection} onValueChange={handleSectionChange} className='h-full'>
-                  <div className='flex items-start justify-between p-4'>
-                     <TabsList className='grid w-[220px] grid-cols-2'>
-                        {sections.map((section) => (
-                           <TabsTrigger key={section.id} value={section.id}>
-                              {section.label}
-                           </TabsTrigger>
-                        ))}
-                     </TabsList>
-                     <ItemTags item={selectedItem} />
-                  </div>
+      <div className='lg:flex gap-2 space-y-2 h-full text-foreground'>
+         <Card className='min-w-0 flex-1 border-none p-0 overflow-hidden'>
+            <Tabs value={activeSection} onValueChange={handleSectionChange} className='h-full'>
+               <div className='flex items-start justify-between p-4'>
+                  <TabsList className='grid w-[220px] grid-cols-2'>
+                     {sections.map((section) => (
+                        <TabsTrigger key={section.id} value={section.id}>
+                           {section.label}
+                        </TabsTrigger>
+                     ))}
+                  </TabsList>
+                  <ItemTags item={selectedItem} />
+               </div>
 
-                  {sections.map((section) => (
-                     <TabsContent key={section.id} value={section.id} className='min-h-0'>
-                        <ScrollArea className='h-full w-full px-4'>
-                           <ItemPreview
-                              item={selectedItem.section === section.id ? selectedItem : getDefaultItem(section.id)}
-                           />
-                        </ScrollArea>
-                     </TabsContent>
-                  ))}
-               </Tabs>
-            </ResizablePanel>
+               {sections.map((section) => (
+                  <TabsContent key={section.id} value={section.id} className='min-h-0'>
+                     <ScrollArea className='h-full w-full px-4'>
+                        <ItemPreview
+                           item={selectedItem.section === section.id ? selectedItem : getDefaultItem(section.id)}
+                        />
+                     </ScrollArea>
+                  </TabsContent>
+               ))}
+            </Tabs>
+         </Card>
 
-            <ResizableHandle />
+         <div className='flex flex-col space-y-2 lg:max-w-70'>
+            <Card className='flex-1 border-none rounded-br-[4em]'>
+               <div className='flex h-full flex-col items-center justify-center gap-3 p-6 text-center'>
+                  <PanelsTopLeft className='size-8 text-primary' />
+                  <span className='font-semibold'>Side Tabs</span>
+               </div>
+            </Card>
 
-            <ResizablePanel defaultSize='20%' maxSize='30%'>
-               <ResizablePanelGroup orientation='vertical'>
-                  <ResizablePanel defaultSize='30%' maxSize='40%'>
-                     <div className='flex h-full flex-col items-center justify-center gap-3 p-6 text-center'>
-                        <PanelsTopLeft className='size-8 text-primary' />
-                        <span className='font-semibold'>Side Tabs</span>
-                     </div>
-                  </ResizablePanel>
-
-                  <ResizableHandle />
-
-                  <ResizablePanel defaultSize='70%' maxSize='70%'>
-                     <ScrollArea className='h-full w-full'>
-                        <div className='space-y-4 p-4'>
-                           {Object.entries(sidebarCategories).map(([category, items], index) => (
-                              <div key={category} className='space-y-2'>
-                                 {index > 0 && <Separator />}
-                                 <p className='text-sm font-medium text-muted-foreground'>{category}</p>
-                                 <div className='space-y-1'>
-                                    {items.map((item) => (
-                                       <Button
-                                          key={item.id}
-                                          type='button'
-                                          variant='ghost'
-                                          className={cn(
-                                             'h-auto w-full justify-start gap-2 px-2 py-2 text-left',
-                                             selectedItem.id === item.id &&
-                                                'bg-accent text-accent-foreground hover:bg-accent'
-                                          )}
-                                          aria-pressed={selectedItem.id === item.id}
-                                          onClick={() => handleItemSelect(item)}
-                                       >
-                                          <img
-                                             className='size-10 rounded-md object-cover'
-                                             src={item.image}
-                                             alt={item.alt}
-                                          />
-                                          <span className='min-w-0 truncate'>{item.title}</span>
-                                       </Button>
-                                    ))}
-                                 </div>
-                              </div>
+            <Card className='min-h-0 border-none py-0 overflow-hidden rounded-tr-[4em]'>
+               <ScrollArea className='h-full px-4'>
+                  {Object.entries(sidebarCategories).map(([category, items], index) => (
+                     <div key={category} className='space-y-2 py-4'>
+                        {index > 0 && <Separator />}
+                        <p className='text-sm font-medium text-muted-foreground'>{category}</p>
+                        <div className='space-y-1'>
+                           {items.map((item) => (
+                              <Button
+                                 key={item.id}
+                                 type='button'
+                                 variant='ghost'
+                                 className={cn(
+                                    'h-auto w-full justify-start gap-2 px-2 py-2 text-left',
+                                    selectedItem.id === item.id && 'bg-accent text-accent-foreground hover:bg-accent'
+                                 )}
+                                 aria-pressed={selectedItem.id === item.id}
+                                 onClick={() => handleItemSelect(item)}
+                              >
+                                 <img className='size-10 rounded-md object-cover' src={item.image} alt={item.alt} />
+                                 <span className='min-w-0 truncate'>{item.title}</span>
+                              </Button>
                            ))}
                         </div>
-                     </ScrollArea>
-                  </ResizablePanel>
-               </ResizablePanelGroup>
-            </ResizablePanel>
-         </ResizablePanelGroup>
+                     </div>
+                  ))}
+               </ScrollArea>
+            </Card>
+         </div>
       </div>
    )
 }
