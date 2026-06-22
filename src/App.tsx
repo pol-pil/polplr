@@ -4,7 +4,7 @@ import { ThemeProvider } from './components/theme-provider'
 
 function App() {
    return (
-      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
          <div className='absolute z-10 p-4 text-foreground'>
             <ModeToggle />
          </div>

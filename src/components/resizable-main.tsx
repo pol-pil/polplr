@@ -37,9 +37,7 @@ const workItems: WorkItem[] = [
       description: 'The ArtSphere / School Project / 2024',
       embedUrl:
          'https://embed.figma.com/proto/zR7MV8n7ismhZS2bup8sMq/Virtual-Tour-App-for-Art-Gallery--Copy-?node-id=660-113&page-id=0%3A1&starting-point-node-id=660%3A113&scaling=scale-down-width&content-scaling=fixed&embed-host=share&hide-ui=1',
-      tags: [
-         { label: 'Figma', icon: Figma },
-      ],
+      tags: [{ label: 'Figma', icon: Figma }],
    },
    {
       id: 'slicehaus-layout',
@@ -61,9 +59,7 @@ const workItems: WorkItem[] = [
       image: '/artsphere.png',
       alt: 'BondBook layout thumbnail',
       description: 'BondBook / School Project / 2026',
-      tags: [
-         { label: 'Figma', icon: Figma },
-      ],
+      tags: [{ label: 'Figma', icon: Figma }],
    },
    {
       id: 'technoday-poster',
@@ -83,7 +79,10 @@ const workItems: WorkItem[] = [
       image: '/whywait.png',
       alt: 'Why Wait poster thumbnail',
       description: 'Why / Poster Design',
-      tags: [{ label: 'Figma', icon: Figma }, { label: 'Photoshop', icon: Wallpaper }],
+      tags: [
+         { label: 'Figma', icon: Figma },
+         { label: 'Photoshop', icon: Wallpaper },
+      ],
    },
    {
       id: 'resto-poster',
@@ -133,7 +132,10 @@ const workItems: WorkItem[] = [
       image: '/whosbehindthemask.png',
       alt: 'Varre poster thumbnail',
       description: "Who's Behind the Mask / School Project / Poster Design",
-      tags: [{ label: 'Figma', icon: Figma }, { label: 'Photoshop', icon: Wallpaper }],
+      tags: [
+         { label: 'Figma', icon: Figma },
+         { label: 'Photoshop', icon: Wallpaper },
+      ],
    },
    {
       id: 'cleanrasdasdot-poster',
