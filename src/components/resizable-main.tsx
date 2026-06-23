@@ -275,7 +275,7 @@ export function ResizableMain() {
 
    return (
       <div className='lg:flex gap-2 space-y-2 h-full text-foreground'>
-         <Card className='min-w-0 flex-1 h-full border-none p-0 overflow-hidden shadow-lg'>
+         <Card className='min-w-0 flex-1 lg:h-full border-none p-0 overflow-hidden shadow-lg'>
             <Tabs value={activeSection} onValueChange={handleSectionChange} className='h-full'>
                <div className='flex items-start justify-between p-4'>
                   <TabsList className='grid w-[220px] grid-cols-2'>
