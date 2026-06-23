@@ -158,7 +158,7 @@ const workItems: WorkItem[] = [
       title: 'Cleanrot',
       image: '/cleanrot7.png',
       alt: 'Cleanrot poster thumbnail',
-      description: 'Cleanrot / Poster Design',
+      description: 'Cleanrot · Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 9 / 16,
    },
