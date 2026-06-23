@@ -309,8 +309,8 @@ export function ResizableMain() {
             </Tabs>
          </Card>
 
-         <div className='flex flex-col min-w-70 space-y-2 lg:max-w-70'>
-            <Card className='flex-1 border-none rounded-br-[4em] shadow-lg'>
+         <div className='flex flex-col min-w-70 space-y-2 gap-2 lg:gap-0 lg:max-w-70'>
+            <Card className='flex-1 border-none lg:rounded-br-[4em] rounded-tr-[4em] shadow-lg order-2 lg:order-1'>
                <div className='flex h-full flex-col items-center justify-center gap-3 p-6 text-center'>
                   <Avatar size='lg'>
                      <AvatarImage src='/polpr.png' alt='Paul Pilar' />
@@ -319,7 +319,7 @@ export function ResizableMain() {
                </div>
             </Card>
 
-            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden rounded-tr-[4em] shadow-lg'>
+            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden lg:rounded-tr-[4em] rounded-br-[4em] shadow-lg order-1 lg:order-2'>
                <ScrollArea className='h-full px-4'>
                   {Object.entries(sidebarCategories).map(([category, items], index) => (
                      <div key={category} className='space-y-2 py-4'>
