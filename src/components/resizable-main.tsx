@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Atom, Figma, PanelsTopLeft, Wallpaper, Wind } from 'lucide-react'
+import { Atom, Figma, Wallpaper, Wind } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
@@ -7,6 +7,8 @@ import { Button } from './ui/button'
 import { ScrollArea } from './ui/scroll-area'
 import { Separator } from './ui/separator'
 import { Card } from './ui/card'
+import { Avatar, AvatarImage } from './ui/avatar'
+import GradualBlurMemo from './ui/gradual-blur'
 
 type SectionId = 'designs' | 'projects'
 
@@ -34,7 +36,7 @@ const workItems: WorkItem[] = [
       title: 'The ArtSphere',
       image: '/artsphere.png',
       alt: 'The ArtSphere thumbnail',
-      description: 'The ArtSphere / School Project / 2024',
+      description: 'The ArtSphere · School Project · 2024',
       embedUrl:
          'https://embed.figma.com/proto/zR7MV8n7ismhZS2bup8sMq/Virtual-Tour-App-for-Art-Gallery--Copy-?node-id=660-113&page-id=0%3A1&starting-point-node-id=660%3A113&scaling=scale-down-width&content-scaling=fixed&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
@@ -47,7 +49,7 @@ const workItems: WorkItem[] = [
       title: 'Slicehaus',
       image: '/slicehaus.png',
       alt: 'Slicehaus logo',
-      description: 'Slicehaus / School Project / 2025',
+      description: 'Slicehaus · School Project · 2025',
       embedUrl:
          'https://embed.figma.com/proto/xuQnWFXgDs1Ilym2SvqmIl/Slicehaus--Community-?node-id=2003-22266&p=f&viewport=-144%2C-189%2C0.02&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=2003%3A22266&page-id=0%3A1&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
@@ -60,7 +62,7 @@ const workItems: WorkItem[] = [
       title: 'BondBook',
       image: '/bondbook.png',
       alt: 'BondBook layout thumbnail',
-      description: 'BondBook / School Project / 2026',
+      description: 'BondBook · School Project · 2026',
       embedUrl:
          'https://embed.figma.com/proto/QuentdTLxdNzwYDaEI2AL6/Pilar--John-Paul?node-id=943-2646&p=f&viewport=473%2C-79%2C0.09&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=943%3A2619&page-id=0%3A1&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
@@ -73,7 +75,7 @@ const workItems: WorkItem[] = [
       title: 'Technoday',
       image: '/technoday.png',
       alt: 'Technoday poster thumbnail',
-      description: 'Technoday / Event Poster Design',
+      description: 'Technoday · Event Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 1 / 1.41,
    },
@@ -84,7 +86,7 @@ const workItems: WorkItem[] = [
       title: 'Why Wait?',
       image: '/whywait.png',
       alt: 'Why Wait poster thumbnail',
-      description: 'Why / Poster Design',
+      description: 'Why · Poster Design',
       tags: [
          { label: 'Figma', icon: Figma },
          { label: 'Photoshop', icon: Wallpaper },
@@ -98,7 +100,7 @@ const workItems: WorkItem[] = [
       title: 'Resto',
       image: '/resto.png',
       alt: 'Resto poster thumbnail',
-      description: 'Resto / Poster Design',
+      description: 'Resto · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 16 / 9,
    },
@@ -109,7 +111,7 @@ const workItems: WorkItem[] = [
       title: 'Jane',
       image: '/jane9.png',
       alt: 'Jane poster thumbnail',
-      description: 'Jane / Poster Design',
+      description: 'Jane · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 16 / 9,
    },
@@ -120,7 +122,7 @@ const workItems: WorkItem[] = [
       title: 'Never Happened',
       image: '/neverhappened.png',
       alt: 'Never Happened poster thumbnail',
-      description: 'Never Happened / Poster Design',
+      description: 'Never Happened · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 2 / 3,
    },
@@ -131,7 +133,7 @@ const workItems: WorkItem[] = [
       title: 'Juliana',
       image: '/juliana.png',
       alt: 'Juliana poster thumbnail',
-      description: 'Juliana / Poster Design',
+      description: 'Juliana · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 2 / 3,
    },
@@ -142,7 +144,7 @@ const workItems: WorkItem[] = [
       title: "Who's Behind the Mask?",
       image: '/whosbehindthemask.png',
       alt: 'Varre poster thumbnail',
-      description: "Who's Behind the Mask / School Project / Poster Design",
+      description: "Who's Behind the Mask · School Project · Poster Design",
       tags: [
          { label: 'Figma', icon: Figma },
          { label: 'Photoshop', icon: Wallpaper },
@@ -211,15 +213,8 @@ function ItemPreview({ item }: { item: WorkItem }) {
                   />
                </div>
             ) : (
-               <div
-                  className='w-full overflow-hidden rounded-lg'
-                  style={{ aspectRatio: item.aspectRatio }}
-               >
-                  <iframe
-                     className='h-full w-full rounded-lg'
-                     src={item.embedUrl}
-                     title={item.title}
-                  />
+               <div className='w-full overflow-hidden rounded-lg' style={{ aspectRatio: item.aspectRatio }}>
+                  <iframe className='h-full w-full rounded-lg' src={item.embedUrl} title={item.title} />
                </div>
             )
          ) : isPortrait ? (
@@ -237,15 +232,8 @@ function ItemPreview({ item }: { item: WorkItem }) {
             </div>
          ) : (
             // Landscape image: full width, height follows ratio
-            <div
-               className='w-full overflow-hidden rounded-lg'
-               style={{ aspectRatio: item.aspectRatio }}
-            >
-               <img
-                  className='h-full w-full object-cover rounded-lg'
-                  src={item.image}
-                  alt={item.alt}
-               />
+            <div className='w-full overflow-hidden rounded-lg' style={{ aspectRatio: item.aspectRatio }}>
+               <img className='h-full w-full object-cover rounded-lg' src={item.image} alt={item.alt} />
             </div>
          )}
          <p className='text-lg font-medium pb-4'>{item.description}</p>
@@ -287,7 +275,7 @@ export function ResizableMain() {
 
    return (
       <div className='lg:flex gap-2 space-y-2 h-full text-foreground'>
-         <Card className='min-w-0 flex-1 border-none p-0 overflow-hidden'>
+         <Card className='min-w-0 flex-1 h-full border-none p-0 overflow-hidden shadow-lg'>
             <Tabs value={activeSection} onValueChange={handleSectionChange} className='h-full'>
                <div className='flex items-start justify-between p-4'>
                   <TabsList className='grid w-[220px] grid-cols-2'>
@@ -312,15 +300,17 @@ export function ResizableMain() {
             </Tabs>
          </Card>
 
-         <div className='flex flex-col space-y-2 lg:max-w-70'>
-            <Card className='flex-1 border-none rounded-br-[4em]'>
+         <div className='flex flex-col min-w-70 space-y-2 lg:max-w-70'>
+            <Card className='flex-1 border-none rounded-br-[4em] shadow-lg'>
                <div className='flex h-full flex-col items-center justify-center gap-3 p-6 text-center'>
-                  <PanelsTopLeft className='size-8 text-primary' />
-                  <span className='font-semibold'>Side Tabs</span>
+                  <Avatar size='lg'>
+                     <AvatarImage src='/polpr.png' alt='Paul Pilar' />
+                  </Avatar>
+                  <span className='font-semibold'>@pol.plr</span>
                </div>
             </Card>
 
-            <Card className='min-h-0 border-none py-0 overflow-hidden rounded-tr-[4em]'>
+            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden rounded-tr-[4em] shadow-lg'>
                <ScrollArea className='h-full px-4'>
                   {Object.entries(sidebarCategories).map(([category, items], index) => (
                      <div key={category} className='space-y-2 py-4'>
@@ -333,7 +323,7 @@ export function ResizableMain() {
                                  type='button'
                                  variant='ghost'
                                  className={cn(
-                                    'h-auto w-full justify-start gap-2 px-2 py-2 text-left',
+                                    'h-auto w-full justify-start gap-2 px-2 py-2 text-left ',
                                     selectedItem.id === item.id && 'bg-accent text-accent-foreground hover:bg-accent'
                                  )}
                                  aria-pressed={selectedItem.id === item.id}
@@ -346,6 +336,16 @@ export function ResizableMain() {
                         </div>
                      </div>
                   ))}
+                  <GradualBlurMemo
+                     target='parent'
+                     position='bottom'
+                     height='1rem'
+                     strength={1}
+                     divCount={6}
+                     curve='bezier'
+                     exponential
+                     opacity={1}
+                  />
                </ScrollArea>
             </Card>
          </div>
