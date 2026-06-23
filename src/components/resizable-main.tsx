@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Atom, Figma, Wallpaper, Wind } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
@@ -62,7 +62,7 @@ const workItems: WorkItem[] = [
       title: 'BondBook',
       image: '/bondbook.png',
       alt: 'BondBook layout thumbnail',
-      description: 'BondBook · School Project · 2026',
+      description: 'BondBook · School Project · 2024',
       embedUrl:
          'https://embed.figma.com/proto/QuentdTLxdNzwYDaEI2AL6/Pilar--John-Paul?node-id=943-2646&p=f&viewport=473%2C-79%2C0.09&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=943%3A2619&page-id=0%3A1&embed-host=share&hide-ui=1',
       tags: [{ label: 'Figma', icon: Figma }],
@@ -245,7 +245,7 @@ function ItemTags({ item }: { item: WorkItem }) {
    return (
       <div className='flex flex-wrap justify-end gap-2'>
          {item.tags.map(({ icon: Icon, label }) => (
-            <Badge key={label} variant='outline'>
+            <Badge className='h-8 px-4' key={label} variant='outline'>
                <Icon data-icon='inline-start' />
                {label}
             </Badge>
@@ -261,6 +261,8 @@ export function ResizableMain() {
    const selectedItem = workItems.find((item) => item.id === selectedItemId) ?? getDefaultItem(activeSection)
    const sectionItems = useMemo(() => workItems.filter((item) => item.section === activeSection), [activeSection])
    const sidebarCategories = useMemo(() => getItemsByCategory(sectionItems), [sectionItems])
+   
+   const scrollRef = useRef<HTMLDivElement>(null)
 
    function handleSectionChange(value: string) {
       const nextSection = value as SectionId
@@ -271,6 +273,13 @@ export function ResizableMain() {
    function handleItemSelect(item: WorkItem) {
       setActiveSection(item.section)
       setSelectedItemId(item.id)
+      
+      const isMobile = window.innerWidth < 1024
+      if (isMobile) {
+         window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else {
+         scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+      }
    }
 
    return (
