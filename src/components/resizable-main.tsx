@@ -205,8 +205,8 @@ function ItemPreview({ item }: { item: WorkItem }) {
                   <iframe
                      className='rounded-lg'
                      style={{
-                        height: '80vh',
-                        width: `calc(80vh * ${item.aspectRatio})`,
+                        height: 'min(80vh, 90vw / ' + item.aspectRatio + ')',
+                        width: `min(90vw, min(80vh, 90vw / ${item.aspectRatio}) * ${item.aspectRatio})`,
                      }}
                      src={item.embedUrl}
                      title={item.title}
@@ -218,13 +218,12 @@ function ItemPreview({ item }: { item: WorkItem }) {
                </div>
             )
          ) : isPortrait ? (
-            // Portrait image: constrained by screen height, centered
             <div className='flex justify-center'>
                <img
                   className='rounded-lg object-contain'
                   style={{
-                     height: '80vh',
-                     width: `calc(80vh * ${item.aspectRatio})`,
+                     height: 'min(80vh, 90vw / ' + item.aspectRatio + ')',
+                     width: `min(90vw, min(80vh, 90vw / ${item.aspectRatio}) * ${item.aspectRatio})`,
                   }}
                   src={item.image}
                   alt={item.alt}
@@ -261,7 +260,7 @@ export function ResizableMain() {
    const selectedItem = workItems.find((item) => item.id === selectedItemId) ?? getDefaultItem(activeSection)
    const sectionItems = useMemo(() => workItems.filter((item) => item.section === activeSection), [activeSection])
    const sidebarCategories = useMemo(() => getItemsByCategory(sectionItems), [sectionItems])
-   
+
    const scrollRef = useRef<HTMLDivElement>(null)
 
    function handleSectionChange(value: string) {
@@ -273,7 +272,7 @@ export function ResizableMain() {
    function handleItemSelect(item: WorkItem) {
       setActiveSection(item.section)
       setSelectedItemId(item.id)
-      
+
       const isMobile = window.innerWidth < 1024
       if (isMobile) {
          window.scrollTo({ top: 0, behavior: 'smooth' })
