@@ -20,6 +20,7 @@ type WorkItem = {
    title: string
    image: string
    video?: string
+   thumbnail?: string
    alt: string
    description: string
    embedUrl?: string
@@ -244,6 +245,7 @@ const workItems: WorkItem[] = [
       title: 'e-ResQ',
       image: '/eresq.png',
       video: '/eresq.mp4',
+      thumbnail: '/eresqsummary.mp4',
       alt: 'e-ResQ app thumbnail',
       description: 'Portfolio · Capstone Project',
       tags: [
@@ -279,7 +281,7 @@ function ItemPreview({ item }: { item: WorkItem }) {
       const [popOpen, setPopOpen] = useState(false)
 
       return (
-        <div>
+        <div className='flex flex-col gap-4'>
           <div
             className="cursor-pointer overflow-hidden rounded-lg"
             style={{ aspectRatio: item.aspectRatio }}
@@ -288,7 +290,7 @@ function ItemPreview({ item }: { item: WorkItem }) {
             {/* thumbnail — still autoPlay muted loop */}
             <video autoPlay muted playsInline loop
               className="h-full w-full object-cover"
-              src={item.video}
+              src={item.thumbnail || item.video}
             />
           </div>
       
@@ -302,7 +304,6 @@ function ItemPreview({ item }: { item: WorkItem }) {
       )
    }
 
-   // Embed (Figma prototypes) or static image fallback
    return (
       <div className='flex h-full flex-col gap-4'>
          {item.embedUrl ? (
