@@ -8,7 +8,7 @@ import { ScrollArea } from './ui/scroll-area'
 import { Separator } from './ui/separator'
 import { Card } from './ui/card'
 import { Avatar, AvatarImage } from './ui/avatar'
-import GradualBlurMemo from './ui/gradual-blur'
+// import GradualBlurMemo from './ui/gradual-blur'
 import { VideoPopOver } from './video-popover'
 
 type SectionId = 'designs' | 'projects'
@@ -450,7 +450,7 @@ export function ResizableMain() {
                         </div>
                      </div>
                   ))}
-                  <GradualBlurMemo
+                  {/* <GradualBlurMemo
                      target='parent'
                      position='bottom'
                      height='1rem'
@@ -459,7 +459,7 @@ export function ResizableMain() {
                      curve='bezier'
                      exponential
                      opacity={1}
-                  />
+                  /> */}
                </ScrollArea>
             </Card>
          </div>
