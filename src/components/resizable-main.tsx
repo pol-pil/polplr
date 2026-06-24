@@ -438,7 +438,7 @@ export function ResizableMain() {
                                  variant='ghost'
                                  className={cn(
                                     'h-auto w-full justify-start gap-2 px-2 py-2 text-left ',
-                                    selectedItem.id === item.id && 'bg-primary text-accent-foreground hover:bg-accent'
+                                    selectedItem.id === item.id && 'bg-primary dark:text-foreground text-accent-foreground hover:bg-accent'
                                  )}
                                  aria-pressed={selectedItem.id === item.id}
                                  onClick={() => handleItemSelect(item)}
