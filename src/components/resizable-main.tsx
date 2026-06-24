@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Atom, Figma, Wallpaper, Wind } from 'lucide-react'
+import { Wallpaper } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
@@ -9,6 +9,7 @@ import { Separator } from './ui/separator'
 import { Card } from './ui/card'
 import { Avatar, AvatarImage } from './ui/avatar'
 import GradualBlurMemo from './ui/gradual-blur'
+import { VideoPopOver } from './video-popover'
 
 type SectionId = 'designs' | 'projects'
 
@@ -18,15 +19,89 @@ type WorkItem = {
    category: string
    title: string
    image: string
+   video?: string
    alt: string
    description: string
    embedUrl?: string
    tags: Array<{
       label: string
-      icon: typeof Figma
+      icon: React.FC<React.SVGProps<SVGSVGElement>>
    }>
    aspectRatio: number
 }
+
+const FigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
+   <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='24'
+      height='24'
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      {...props}
+   >
+      <path d='M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z' />
+      <path d='M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z' />
+      <path d='M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z' />
+      <path d='M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z' />
+      <path d='M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z' />
+   </svg>
+)
+
+const ReactIcon = () => (
+   <svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12,10.11A1.87,1.87,0,1,1,10.13,12,1.88,1.88,0,0,1,12,10.11M7.37,20c.63.38,2-.2,3.6-1.7a24.22,24.22,0,0,1-1.51-1.9A22.7,22.7,0,0,1,7.06,16c-.51,2.14-.32,3.61.31,4m.71-5.74-.29-.51a7.91,7.91,0,0,0-.29.86c.27.06.57.11.88.16l-.3-.51m6.54-.76.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17,9,12.6,9,12,9s-1.17,0-1.71,0c-.29.47-.61.94-.91,1.47L8.57,12l.81,1.5c.3.53.62,1,.91,1.47.54,0,1.11,0,1.71,0s1.17,0,1.71,0c.29-.47.61-.94.91-1.47M12,6.78c-.19.22-.39.45-.59.72h1.18c-.2-.27-.4-.5-.59-.72m0,10.44c.19-.22.39-.45.59-.72H11.41c.2.27.4.5.59.72M16.62,4c-.62-.38-2,.2-3.59,1.7a24.22,24.22,0,0,1,1.51,1.9,22.7,22.7,0,0,1,2.4.36c.51-2.14.32-3.61-.32-4m-.7,5.74.29.51a7.91,7.91,0,0,0,.29-.86c-.27-.06-.57-.11-.88-.16l.3.51m1.45-7c1.47.84,1.63,3.05,1,5.63,2.54.75,4.37,2,4.37,3.68s-1.83,2.93-4.37,3.68c.62,2.58.46,4.79-1,5.63s-3.45-.12-5.37-1.95c-1.92,1.83-3.91,2.79-5.38,1.95s-1.62-3-1-5.63c-2.54-.75-4.37-2-4.37-3.68S3.08,9.07,5.62,8.32c-.62-2.58-.46-4.79,1-5.63s3.46.12,5.38,1.95c1.92-1.83,3.91-2.79,5.37-1.95M17.08,12A22.51,22.51,0,0,1,18,14.26c2.1-.63,3.28-1.53,3.28-2.26S20.07,10.37,18,9.74A22.51,22.51,0,0,1,17.08,12M6.92,12A22.51,22.51,0,0,1,6,9.74c-2.1.63-3.28,1.53-3.28,2.26S3.93,13.63,6,14.26A22.51,22.51,0,0,1,6.92,12m9,2.26-.3.51c.31,0,.61-.1.88-.16a7.91,7.91,0,0,0-.29-.86l-.29.51M13,18.3c1.59,1.5,3,2.08,3.59,1.7s.83-1.82.32-4a22.7,22.7,0,0,1-2.4.36A24.22,24.22,0,0,1,13,18.3M8.08,9.74l.3-.51c-.31,0-.61.1-.88.16a7.91,7.91,0,0,0,.29.86l.29-.51M11,5.7C9.38,4.2,8,3.62,7.37,4s-.82,1.82-.31,4a22.7,22.7,0,0,1,2.4-.36A24.22,24.22,0,0,1,11,5.7Z"/>
+</svg>
+)
+
+const TailwindIcon = () => (
+   <svg
+      fill='currentColor'
+      width='800px'
+      height='800px'
+      viewBox='0 0 24 24'
+      xmlns='http://www.w3.org/2000/svg'
+   >
+      <path
+         fill-rule='evenodd'
+         clip-rule='evenodd'
+         d='M12 6.036c-2.667 0-4.333 1.325-5 3.976 1-1.325 2.167-1.822 3.5-1.491.761.189 1.305.738 1.906 1.345C13.387 10.855 14.522 12 17 12c2.667 0 4.333-1.325 5-3.976-1 1.325-2.166 1.822-3.5 1.491-.761-.189-1.305-.738-1.907-1.345-.98-.99-2.114-2.134-4.593-2.134zM7 12c-2.667 0-4.333 1.325-5 3.976 1-1.326 2.167-1.822 3.5-1.491.761.189 1.305.738 1.907 1.345.98.989 2.115 2.134 4.594 2.134 2.667 0 4.333-1.325 5-3.976-1 1.325-2.167 1.822-3.5 1.491-.761-.189-1.305-.738-1.906-1.345C10.613 13.145 9.478 12 7 12z'
+      />
+   </svg>
+)
+
+const ExpoIcon = () => (
+   <svg
+      fill='currentColor'
+      width='800px'
+      height='800px'
+      viewBox='0 0 24 24'
+      role='img'
+      xmlns='http://www.w3.org/2000/svg'
+   >
+      <path d='M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 0 1 1.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77z' />
+   </svg>
+)
+
+const ConvexIcon = () => (
+   <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='31 31.5 122 125'>
+      <path
+         d='M108.092 130.021C126.258 128.003 143.385 118.323 152.815 102.167C148.349 142.128 104.653 167.385 68.9858 151.878C65.6992 150.453 62.8702 148.082 60.9288 145.034C52.9134 132.448 50.2786 116.433 54.0644 101.899C64.881 120.567 86.8748 132.01 108.092 130.021Z'
+         fill='currentColor'
+      />
+      <path
+         d='M53.4012 90.1735C46.0375 107.191 45.7186 127.114 54.7463 143.51C22.9759 119.608 23.3226 68.4578 54.358 44.7949C57.2286 42.6078 60.64 41.3097 64.2178 41.1121C78.9312 40.336 93.8804 46.0225 104.364 56.6193C83.0637 56.831 62.318 70.4756 53.4012 90.1735Z'
+         fill='currentColor'
+      />
+      <path
+         d='M114.637 61.8552C103.89 46.8701 87.0686 36.6684 68.6387 36.358C104.264 20.1876 148.085 46.4045 152.856 85.1654C153.3 88.7635 152.717 92.4322 151.122 95.6775C144.466 109.195 132.124 119.679 117.702 123.559C128.269 103.96 126.965 80.0151 114.637 61.8552Z'
+         fill='currentColor'
+      />
+   </svg>
+)
 
 const workItems: WorkItem[] = [
    {
@@ -39,7 +114,7 @@ const workItems: WorkItem[] = [
       description: 'The ArtSphere · School Project · 2024',
       embedUrl:
          'https://embed.figma.com/proto/zR7MV8n7ismhZS2bup8sMq/Virtual-Tour-App-for-Art-Gallery--Copy-?node-id=660-113&page-id=0%3A1&starting-point-node-id=660%3A113&scaling=scale-down-width&content-scaling=fixed&embed-host=share&hide-ui=1',
-      tags: [{ label: 'Figma', icon: Figma }],
+      tags: [{ label: 'Figma', icon: FigmaIcon }],
       aspectRatio: 16 / 10.4,
    },
    {
@@ -52,7 +127,7 @@ const workItems: WorkItem[] = [
       description: 'Slicehaus · School Project · 2025',
       embedUrl:
          'https://embed.figma.com/proto/xuQnWFXgDs1Ilym2SvqmIl/Slicehaus--Community-?node-id=2003-22266&p=f&viewport=-144%2C-189%2C0.02&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=2003%3A22266&page-id=0%3A1&embed-host=share&hide-ui=1',
-      tags: [{ label: 'Figma', icon: Figma }],
+      tags: [{ label: 'Figma', icon: FigmaIcon }],
       aspectRatio: 16 / 10.4,
    },
    {
@@ -65,7 +140,7 @@ const workItems: WorkItem[] = [
       description: 'BondBook · School Project · 2024',
       embedUrl:
          'https://embed.figma.com/proto/QuentdTLxdNzwYDaEI2AL6/Pilar--John-Paul?node-id=943-2646&p=f&viewport=473%2C-79%2C0.09&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=943%3A2619&page-id=0%3A1&embed-host=share&hide-ui=1',
-      tags: [{ label: 'Figma', icon: Figma }],
+      tags: [{ label: 'Figma', icon: FigmaIcon }],
       aspectRatio: 9 / 18.4,
    },
    {
@@ -88,7 +163,7 @@ const workItems: WorkItem[] = [
       alt: 'Why Wait poster thumbnail',
       description: 'Why · Poster Design',
       tags: [
-         { label: 'Figma', icon: Figma },
+         { label: 'Figma', icon: FigmaIcon },
          { label: 'Photoshop', icon: Wallpaper },
       ],
       aspectRatio: 16 / 9,
@@ -146,7 +221,7 @@ const workItems: WorkItem[] = [
       alt: 'Varre poster thumbnail',
       description: "Who's Behind the Mask · School Project · Poster Design",
       tags: [
-         { label: 'Figma', icon: Figma },
+         { label: 'Figma', icon: FigmaIcon },
          { label: 'Photoshop', icon: Wallpaper },
       ],
       aspectRatio: 4 / 5,
@@ -163,18 +238,21 @@ const workItems: WorkItem[] = [
       aspectRatio: 9 / 16,
    },
    {
-      id: 'portfolio-app',
+      id: 'eResq-app',
       section: 'projects',
       category: 'Apps',
-      title: 'Portfolio',
-      image: '/artsphere.png',
-      alt: 'Portfolio app thumbnail',
-      description: 'Portfolio / React Project',
+      title: 'e-ResQ',
+      image: '/eresq.png',
+      video: '/eresq.mp4',
+      alt: 'e-ResQ app thumbnail',
+      description: 'Portfolio · Capstone Project',
       tags: [
-         { label: 'React', icon: Atom },
-         { label: 'Tailwind', icon: Wind },
+         { label: 'React', icon: ReactIcon },
+         { label: 'Tailwind', icon: TailwindIcon },
+         { label: 'Expo', icon: ExpoIcon },
+         { label: 'Convex', icon: ConvexIcon },
       ],
-      aspectRatio: 9 / 16,
+      aspectRatio: 16 / 9,
    },
 ]
 
@@ -197,6 +275,34 @@ function getItemsByCategory(items: WorkItem[]) {
 function ItemPreview({ item }: { item: WorkItem }) {
    const isPortrait = item.aspectRatio < 1
 
+   if (item.video) {
+      const [popOpen, setPopOpen] = useState(false)
+
+      return (
+        <div>
+          <div
+            className="cursor-pointer overflow-hidden rounded-lg"
+            style={{ aspectRatio: item.aspectRatio }}
+            onClick={() => setPopOpen(true)}
+          >
+            {/* thumbnail — still autoPlay muted loop */}
+            <video autoPlay muted playsInline loop
+              className="h-full w-full object-cover"
+              src={item.video}
+            />
+          </div>
+      
+          <VideoPopOver
+            src={item.video}
+            open={popOpen}
+            onClose={() => setPopOpen(false)}
+          />
+          <p className='text-lg font-medium pb-4'>{item.description}</p>
+        </div>
+      )
+   }
+
+   // Embed (Figma prototypes) or static image fallback
    return (
       <div className='flex h-full flex-col gap-4'>
          {item.embedUrl ? (
@@ -230,7 +336,6 @@ function ItemPreview({ item }: { item: WorkItem }) {
                />
             </div>
          ) : (
-            // Landscape image: full width, height follows ratio
             <div className='w-full overflow-hidden rounded-lg' style={{ aspectRatio: item.aspectRatio }}>
                <img className='h-full w-full object-cover rounded-lg' src={item.image} alt={item.alt} />
             </div>
@@ -244,9 +349,9 @@ function ItemTags({ item }: { item: WorkItem }) {
    return (
       <div className='flex flex-wrap justify-end gap-2'>
          {item.tags.map(({ icon: Icon, label }) => (
-            <Badge className='h-8 px-4' key={label} variant='outline'>
+            <Badge className='px-2' key={label} variant='outline'>
                <Icon data-icon='inline-start' />
-               {label}
+               <p className='hidden lg:block'>{label}</p>
             </Badge>
          ))}
       </div>
@@ -285,7 +390,7 @@ export function ResizableMain() {
       <div className='lg:flex gap-2 space-y-2 h-full text-foreground'>
          <Card className='min-w-0 flex-1 lg:h-full border-none p-0 overflow-hidden shadow-lg'>
             <Tabs value={activeSection} onValueChange={handleSectionChange} className='h-full'>
-               <div className='flex items-start justify-between p-4'>
+               <div className='flex items-center justify-between p-4'>
                   <TabsList className='grid w-[220px] grid-cols-2'>
                      {sections.map((section) => (
                         <TabsTrigger key={section.id} value={section.id}>
@@ -332,7 +437,7 @@ export function ResizableMain() {
                                  variant='ghost'
                                  className={cn(
                                     'h-auto w-full justify-start gap-2 px-2 py-2 text-left ',
-                                    selectedItem.id === item.id && 'bg-accent text-accent-foreground hover:bg-accent'
+                                    selectedItem.id === item.id && 'bg-primary text-accent-foreground hover:bg-accent'
                                  )}
                                  aria-pressed={selectedItem.id === item.id}
                                  onClick={() => handleItemSelect(item)}
