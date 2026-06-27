@@ -116,7 +116,7 @@ const TextRoll: React.FC<{
             <motion.span
               variants={{
                 initial: {
-                  y: "100%",
+                  y: "110%",
                 },
                 hovered: {
                   y: 0,

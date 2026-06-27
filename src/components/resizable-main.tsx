@@ -11,7 +11,6 @@ import { Avatar, AvatarImage } from './ui/avatar'
 // import GradualBlurMemo from './ui/gradual-blur'
 import { VideoPopOver } from './video-popover'
 import { TextRoll } from './ui/skiper-ui/skiper58'
-import { motion } from 'framer-motion'
 
 type SectionId = 'designs' | 'projects'
 
@@ -105,8 +104,8 @@ const workItems: WorkItem[] = [
       id: 'artsphere-layout',
       section: 'designs',
       category: 'Layouts',
-      title: 'The ArtSphere',
-      image: '/artsphere.png',
+      title: 'ArtSphere',
+      image: '/artsphere1.png',
       alt: 'The ArtSphere thumbnail',
       description: 'The ArtSphere · School Project · 2024',
       embedUrl:
@@ -119,7 +118,7 @@ const workItems: WorkItem[] = [
       section: 'designs',
       category: 'Layouts',
       title: 'Slicehaus',
-      image: '/slicehaus.png',
+      image: '/slicehaus1.png',
       alt: 'Slicehaus logo',
       description: 'Slicehaus · School Project · 2025',
       embedUrl:
@@ -132,7 +131,7 @@ const workItems: WorkItem[] = [
       section: 'designs',
       category: 'Layouts',
       title: 'BondBook',
-      image: '/bondbook.png',
+      image: '/bondbook1.png',
       alt: 'BondBook layout thumbnail',
       description: 'BondBook · School Project · 2024',
       embedUrl:
@@ -213,7 +212,7 @@ const workItems: WorkItem[] = [
       id: 'varre-poster',
       section: 'designs',
       category: 'Posters',
-      title: "Varre",
+      title: 'Varre',
       image: '/whosbehindthemask.png',
       alt: 'Varre poster thumbnail',
       description: "Who's Behind the Mask · School Project · Poster Design",
@@ -256,11 +255,11 @@ const workItems: WorkItem[] = [
       id: 'casa-app',
       section: 'projects',
       category: 'Apps',
-      title: 'Hotel Management System',
+      title: 'Booking System',
       image: '/casatmb.png',
       video: '/casa.mp4',
       thumbnail: '/casapreview.mp4',
-      alt: 'Hotel Management System thumbnail',
+      alt: 'Booking System thumbnail',
       description: 'Casa Jedliana · OJT Project · 2026',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 16 / 10,
@@ -385,7 +384,7 @@ function WorkItemButton({
          variant='ghost'
          className={cn(
             'group relative w-full h-14 overflow-hidden rounded-md p-0 border-0',
-            isSelected && 'ring-2 ring-primary'
+            isSelected && 'shadow-2xl'
          )}
          aria-pressed={isSelected}
          onClick={() => onSelect(item)}
@@ -397,19 +396,21 @@ function WorkItemButton({
          {/* Overlay: invisible by default, darkens on hover */}
          <div
             className={cn(
-               'absolute inset-0 bg-black transition-opacity duration-500',
-               isHovered ? 'opacity-80' : 'opacity-0'
+               'absolute inset-0 bg-white dark:bg-black transition-opacity duration-500',
+               isHovered ? 'opacity-70' : 'opacity-80',
+               isSelected && 'opacity-0'
             )}
          />
 
          {/* Text: hidden by default, fades in on hover */}
          <div
             className={cn(
-               'relative z-10 flex h-full w-full items-center justify-center px-2 transition-opacity duration-300',
-               isHovered ? 'opacity-100' : 'opacity-0'
+               'relative z-10 flex h-full w-full items-center justify-center px-2 transition-opacity duration-500 dark:text-white text-black',
+               isHovered ? 'opacity-100' : 'lg:opacity-0',
+               isSelected && 'opacity-0'
             )}
          >
-            <TextRoll animate={isHovered ? 'hovered' : 'initial'} className='font-bold text-xl uppercase text-white'>
+            <TextRoll animate={isHovered ? 'hovered' : 'initial'} className='font-semibold lg:font-bold text-xl uppercase'>
                {item.title}
             </TextRoll>
          </div>
@@ -489,7 +490,7 @@ export function ResizableMain() {
                         <div key={category} className='space-y-2 py-4 w-full'>
                            {index > 0 && <Separator />}
                            <p className='text-sm font-medium text-muted-foreground'>{category}</p>
-                           <div className='space-y-1 w-full'>
+                           <div className='space-y-2 w-full'>
                               {items.map((item) => (
                                  <WorkItemButton
                                     key={item.id}
