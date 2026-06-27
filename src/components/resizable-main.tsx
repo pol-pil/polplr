@@ -256,6 +256,17 @@ const workItems: WorkItem[] = [
       ],
       aspectRatio: 16 / 9,
    },
+   {
+      id: 'casa-app',
+      section: 'projects',
+      category: 'Apps',
+      title: 'Hotel Management System',
+      image: '/cleanrot7.png',
+      alt: 'Cleanrot poster thumbnail',
+      description: 'Cleanrot · Poster Design',
+      tags: [{ label: 'Photoshop', icon: Wallpaper }],
+      aspectRatio: 9 / 16,
+   },
 ]
 
 const sections: Array<{ id: SectionId; label: string }> = [

@@ -239,7 +239,7 @@ body {
 }
 
 /* Scroll Fade Effect */
-@supports (animation-timeline: scroll()) {
+/* @supports (animation-timeline: scroll()) {
   @property --ft {
     syntax: "<length>";
     inherits: false;
@@ -291,4 +291,4 @@ body {
       --fb: 0px;
     }
   }
-}
+} */
