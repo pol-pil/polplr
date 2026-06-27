@@ -10,6 +10,8 @@ import { Card } from './ui/card'
 import { Avatar, AvatarImage } from './ui/avatar'
 // import GradualBlurMemo from './ui/gradual-blur'
 import { VideoPopOver } from './video-popover'
+import { TextRoll } from './ui/skiper-ui/skiper58'
+import { motion } from 'framer-motion'
 
 type SectionId = 'designs' | 'projects'
 
@@ -53,19 +55,13 @@ const FigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 const ReactIcon = () => (
-   <svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M12,10.11A1.87,1.87,0,1,1,10.13,12,1.88,1.88,0,0,1,12,10.11M7.37,20c.63.38,2-.2,3.6-1.7a24.22,24.22,0,0,1-1.51-1.9A22.7,22.7,0,0,1,7.06,16c-.51,2.14-.32,3.61.31,4m.71-5.74-.29-.51a7.91,7.91,0,0,0-.29.86c.27.06.57.11.88.16l-.3-.51m6.54-.76.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17,9,12.6,9,12,9s-1.17,0-1.71,0c-.29.47-.61.94-.91,1.47L8.57,12l.81,1.5c.3.53.62,1,.91,1.47.54,0,1.11,0,1.71,0s1.17,0,1.71,0c.29-.47.61-.94.91-1.47M12,6.78c-.19.22-.39.45-.59.72h1.18c-.2-.27-.4-.5-.59-.72m0,10.44c.19-.22.39-.45.59-.72H11.41c.2.27.4.5.59.72M16.62,4c-.62-.38-2,.2-3.59,1.7a24.22,24.22,0,0,1,1.51,1.9,22.7,22.7,0,0,1,2.4.36c.51-2.14.32-3.61-.32-4m-.7,5.74.29.51a7.91,7.91,0,0,0,.29-.86c-.27-.06-.57-.11-.88-.16l.3.51m1.45-7c1.47.84,1.63,3.05,1,5.63,2.54.75,4.37,2,4.37,3.68s-1.83,2.93-4.37,3.68c.62,2.58.46,4.79-1,5.63s-3.45-.12-5.37-1.95c-1.92,1.83-3.91,2.79-5.38,1.95s-1.62-3-1-5.63c-2.54-.75-4.37-2-4.37-3.68S3.08,9.07,5.62,8.32c-.62-2.58-.46-4.79,1-5.63s3.46.12,5.38,1.95c1.92-1.83,3.91-2.79,5.37-1.95M17.08,12A22.51,22.51,0,0,1,18,14.26c2.1-.63,3.28-1.53,3.28-2.26S20.07,10.37,18,9.74A22.51,22.51,0,0,1,17.08,12M6.92,12A22.51,22.51,0,0,1,6,9.74c-2.1.63-3.28,1.53-3.28,2.26S3.93,13.63,6,14.26A22.51,22.51,0,0,1,6.92,12m9,2.26-.3.51c.31,0,.61-.1.88-.16a7.91,7.91,0,0,0-.29-.86l-.29.51M13,18.3c1.59,1.5,3,2.08,3.59,1.7s.83-1.82.32-4a22.7,22.7,0,0,1-2.4.36A24.22,24.22,0,0,1,13,18.3M8.08,9.74l.3-.51c-.31,0-.61.1-.88.16a7.91,7.91,0,0,0,.29.86l.29-.51M11,5.7C9.38,4.2,8,3.62,7.37,4s-.82,1.82-.31,4a22.7,22.7,0,0,1,2.4-.36A24.22,24.22,0,0,1,11,5.7Z"/>
-</svg>
+   <svg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M12,10.11A1.87,1.87,0,1,1,10.13,12,1.88,1.88,0,0,1,12,10.11M7.37,20c.63.38,2-.2,3.6-1.7a24.22,24.22,0,0,1-1.51-1.9A22.7,22.7,0,0,1,7.06,16c-.51,2.14-.32,3.61.31,4m.71-5.74-.29-.51a7.91,7.91,0,0,0-.29.86c.27.06.57.11.88.16l-.3-.51m6.54-.76.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17,9,12.6,9,12,9s-1.17,0-1.71,0c-.29.47-.61.94-.91,1.47L8.57,12l.81,1.5c.3.53.62,1,.91,1.47.54,0,1.11,0,1.71,0s1.17,0,1.71,0c.29-.47.61-.94.91-1.47M12,6.78c-.19.22-.39.45-.59.72h1.18c-.2-.27-.4-.5-.59-.72m0,10.44c.19-.22.39-.45.59-.72H11.41c.2.27.4.5.59.72M16.62,4c-.62-.38-2,.2-3.59,1.7a24.22,24.22,0,0,1,1.51,1.9,22.7,22.7,0,0,1,2.4.36c.51-2.14.32-3.61-.32-4m-.7,5.74.29.51a7.91,7.91,0,0,0,.29-.86c-.27-.06-.57-.11-.88-.16l.3.51m1.45-7c1.47.84,1.63,3.05,1,5.63,2.54.75,4.37,2,4.37,3.68s-1.83,2.93-4.37,3.68c.62,2.58.46,4.79-1,5.63s-3.45-.12-5.37-1.95c-1.92,1.83-3.91,2.79-5.38,1.95s-1.62-3-1-5.63c-2.54-.75-4.37-2-4.37-3.68S3.08,9.07,5.62,8.32c-.62-2.58-.46-4.79,1-5.63s3.46.12,5.38,1.95c1.92-1.83,3.91-2.79,5.37-1.95M17.08,12A22.51,22.51,0,0,1,18,14.26c2.1-.63,3.28-1.53,3.28-2.26S20.07,10.37,18,9.74A22.51,22.51,0,0,1,17.08,12M6.92,12A22.51,22.51,0,0,1,6,9.74c-2.1.63-3.28,1.53-3.28,2.26S3.93,13.63,6,14.26A22.51,22.51,0,0,1,6.92,12m9,2.26-.3.51c.31,0,.61-.1.88-.16a7.91,7.91,0,0,0-.29-.86l-.29.51M13,18.3c1.59,1.5,3,2.08,3.59,1.7s.83-1.82.32-4a22.7,22.7,0,0,1-2.4.36A24.22,24.22,0,0,1,13,18.3M8.08,9.74l.3-.51c-.31,0-.61.1-.88.16a7.91,7.91,0,0,0,.29.86l.29-.51M11,5.7C9.38,4.2,8,3.62,7.37,4s-.82,1.82-.31,4a22.7,22.7,0,0,1,2.4-.36A24.22,24.22,0,0,1,11,5.7Z' />
+   </svg>
 )
 
 const TailwindIcon = () => (
-   <svg
-      fill='currentColor'
-      width='800px'
-      height='800px'
-      viewBox='0 0 24 24'
-      xmlns='http://www.w3.org/2000/svg'
-   >
+   <svg fill='currentColor' width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
       <path
          fill-rule='evenodd'
          clip-rule='evenodd'
@@ -217,7 +213,7 @@ const workItems: WorkItem[] = [
       id: 'varre-poster',
       section: 'designs',
       category: 'Posters',
-      title: "Who's Behind the Mask?",
+      title: "Varre",
       image: '/whosbehindthemask.png',
       alt: 'Varre poster thumbnail',
       description: "Who's Behind the Mask · School Project · Poster Design",
@@ -246,8 +242,8 @@ const workItems: WorkItem[] = [
       image: '/eresq.png',
       video: '/eresq.mp4',
       thumbnail: '/eresqsummary.mp4',
-      alt: 'e-ResQ app thumbnail',
-      description: 'Portfolio · Capstone Project',
+      alt: 'e-ResQ System thumbnail',
+      description: 'Portfolio · Capstone Project · 2025',
       tags: [
          { label: 'React', icon: ReactIcon },
          { label: 'Tailwind', icon: TailwindIcon },
@@ -261,11 +257,13 @@ const workItems: WorkItem[] = [
       section: 'projects',
       category: 'Apps',
       title: 'Hotel Management System',
-      image: '/cleanrot7.png',
-      alt: 'Cleanrot poster thumbnail',
-      description: 'Cleanrot · Poster Design',
+      image: '/casatmb.png',
+      video: '/casa.mp4',
+      thumbnail: '/casapreview.mp4',
+      alt: 'Hotel Management System thumbnail',
+      description: 'Casa Jedliana · OJT Project · 2026',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
-      aspectRatio: 9 / 16,
+      aspectRatio: 16 / 10,
    },
 ]
 
@@ -292,26 +290,26 @@ function ItemPreview({ item }: { item: WorkItem }) {
       const [popOpen, setPopOpen] = useState(false)
 
       return (
-        <div className='flex flex-col gap-4'>
-          <div
-            className="cursor-pointer overflow-hidden rounded-lg"
-            style={{ aspectRatio: item.aspectRatio }}
-            onClick={() => setPopOpen(true)}
-          >
-            {/* thumbnail — still autoPlay muted loop */}
-            <video autoPlay muted playsInline loop
-              className="h-full w-full object-cover"
-              src={item.thumbnail || item.video}
-            />
-          </div>
-      
-          <VideoPopOver
-            src={item.video}
-            open={popOpen}
-            onClose={() => setPopOpen(false)}
-          />
-          <p className='text-lg font-medium pb-4'>{item.description}</p>
-        </div>
+         <div className='flex flex-col gap-4'>
+            <div
+               className='cursor-pointer overflow-hidden rounded-lg'
+               style={{ aspectRatio: item.aspectRatio }}
+               onClick={() => setPopOpen(true)}
+            >
+               {/* thumbnail — still autoPlay muted loop */}
+               <video
+                  autoPlay
+                  muted
+                  playsInline
+                  loop
+                  className='h-full w-full object-cover'
+                  src={item.thumbnail || item.video}
+               />
+            </div>
+
+            <VideoPopOver src={item.video} open={popOpen} onClose={() => setPopOpen(false)} />
+            <p className='text-lg font-medium pb-4'>{item.description}</p>
+         </div>
       )
    }
 
@@ -367,6 +365,55 @@ function ItemTags({ item }: { item: WorkItem }) {
             </Badge>
          ))}
       </div>
+   )
+}
+
+function WorkItemButton({
+   item,
+   isSelected,
+   onSelect,
+}: {
+   item: WorkItem
+   isSelected: boolean
+   onSelect: (item: WorkItem) => void
+}) {
+   const [isHovered, setIsHovered] = useState(false)
+
+   return (
+      <Button
+         type='button'
+         variant='ghost'
+         className={cn(
+            'group relative w-full h-14 overflow-hidden rounded-md p-0 border-0',
+            isSelected && 'ring-2 ring-primary'
+         )}
+         aria-pressed={isSelected}
+         onClick={() => onSelect(item)}
+         onMouseEnter={() => setIsHovered(true)}
+         onMouseLeave={() => setIsHovered(false)}
+      >
+         <img className='absolute inset-0 h-full w-full object-cover' src={item.image} alt={item.alt} />
+
+         {/* Overlay: invisible by default, darkens on hover */}
+         <div
+            className={cn(
+               'absolute inset-0 bg-black transition-opacity duration-500',
+               isHovered ? 'opacity-80' : 'opacity-0'
+            )}
+         />
+
+         {/* Text: hidden by default, fades in on hover */}
+         <div
+            className={cn(
+               'relative z-10 flex h-full w-full items-center justify-center px-2 transition-opacity duration-300',
+               isHovered ? 'opacity-100' : 'opacity-0'
+            )}
+         >
+            <TextRoll animate={isHovered ? 'hovered' : 'initial'} className='font-bold text-xl uppercase text-white'>
+               {item.title}
+            </TextRoll>
+         </div>
+      </Button>
    )
 }
 
@@ -435,42 +482,26 @@ export function ResizableMain() {
                </div>
             </Card>
 
-            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden lg:rounded-tr-[4em] rounded-br-[4em] shadow-lg order-1 lg:order-2'>
-               <ScrollArea className='h-full px-4'>
-                  {Object.entries(sidebarCategories).map(([category, items], index) => (
-                     <div key={category} className='space-y-2 py-4'>
-                        {index > 0 && <Separator />}
-                        <p className='text-sm font-medium text-muted-foreground'>{category}</p>
-                        <div className='space-y-1'>
-                           {items.map((item) => (
-                              <Button
-                                 key={item.id}
-                                 type='button'
-                                 variant='ghost'
-                                 className={cn(
-                                    'h-auto w-full justify-start gap-2 px-2 py-2 text-left ',
-                                    selectedItem.id === item.id && 'bg-primary dark:text-foreground text-accent-foreground hover:bg-accent'
-                                 )}
-                                 aria-pressed={selectedItem.id === item.id}
-                                 onClick={() => handleItemSelect(item)}
-                              >
-                                 <img className='size-10 rounded-md object-cover' src={item.image} alt={item.alt} />
-                                 <span className='min-w-0 truncate'>{item.title}</span>
-                              </Button>
-                           ))}
+            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden lg:rounded-tr-[4em] rounded-br-[4em] shadow-lg order-1 lg:order-2 w-full'>
+               <ScrollArea className='h-full w-full'>
+                  <div className='px-4 w-full'>
+                     {Object.entries(sidebarCategories).map(([category, items], index) => (
+                        <div key={category} className='space-y-2 py-4 w-full'>
+                           {index > 0 && <Separator />}
+                           <p className='text-sm font-medium text-muted-foreground'>{category}</p>
+                           <div className='space-y-1 w-full'>
+                              {items.map((item) => (
+                                 <WorkItemButton
+                                    key={item.id}
+                                    item={item}
+                                    isSelected={selectedItem.id === item.id}
+                                    onSelect={handleItemSelect}
+                                 />
+                              ))}
+                           </div>
                         </div>
-                     </div>
-                  ))}
-                  {/* <GradualBlurMemo
-                     target='parent'
-                     position='bottom'
-                     height='1rem'
-                     strength={1}
-                     divCount={6}
-                     curve='bezier'
-                     exponential
-                     opacity={1}
-                  /> */}
+                     ))}
+                  </div>
                </ScrollArea>
             </Card>
          </div>
