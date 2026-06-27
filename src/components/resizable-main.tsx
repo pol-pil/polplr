@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Wallpaper } from 'lucide-react'
+import { Database, Wallpaper } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
@@ -10,8 +10,9 @@ import { Card } from './ui/card'
 import { Avatar, AvatarImage } from './ui/avatar'
 // import GradualBlurMemo from './ui/gradual-blur'
 import { VideoPopOver } from './video-popover'
+import { TextRoll } from './ui/skiper-ui/skiper58'
 
-type SectionId = 'designs' | 'projects'
+type SectionId = 'visuals' | 'projects'
 
 type WorkItem = {
    id: string
@@ -33,62 +34,70 @@ type WorkItem = {
 
 const FigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width='24'
-      height='24'
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      {...props}
+     xmlns="http://www.w3.org/2000/svg"
+     width="24"
+     height="24"
+     viewBox="0 0 24 24"
+     fill="none"
+     stroke="currentColor"
+     strokeWidth="2"
+     strokeLinecap="round"
+     strokeLinejoin="round"
+     {...props}
    >
-      <path d='M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z' />
-      <path d='M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z' />
-      <path d='M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z' />
-      <path d='M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z' />
-      <path d='M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z' />
+     <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z" />
+     <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z" />
+     <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z" />
+     <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z" />
+     <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" />
    </svg>
-)
-
-const ReactIcon = () => (
-   <svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M12,10.11A1.87,1.87,0,1,1,10.13,12,1.88,1.88,0,0,1,12,10.11M7.37,20c.63.38,2-.2,3.6-1.7a24.22,24.22,0,0,1-1.51-1.9A22.7,22.7,0,0,1,7.06,16c-.51,2.14-.32,3.61.31,4m.71-5.74-.29-.51a7.91,7.91,0,0,0-.29.86c.27.06.57.11.88.16l-.3-.51m6.54-.76.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17,9,12.6,9,12,9s-1.17,0-1.71,0c-.29.47-.61.94-.91,1.47L8.57,12l.81,1.5c.3.53.62,1,.91,1.47.54,0,1.11,0,1.71,0s1.17,0,1.71,0c.29-.47.61-.94.91-1.47M12,6.78c-.19.22-.39.45-.59.72h1.18c-.2-.27-.4-.5-.59-.72m0,10.44c.19-.22.39-.45.59-.72H11.41c.2.27.4.5.59.72M16.62,4c-.62-.38-2,.2-3.59,1.7a24.22,24.22,0,0,1,1.51,1.9,22.7,22.7,0,0,1,2.4.36c.51-2.14.32-3.61-.32-4m-.7,5.74.29.51a7.91,7.91,0,0,0,.29-.86c-.27-.06-.57-.11-.88-.16l.3.51m1.45-7c1.47.84,1.63,3.05,1,5.63,2.54.75,4.37,2,4.37,3.68s-1.83,2.93-4.37,3.68c.62,2.58.46,4.79-1,5.63s-3.45-.12-5.37-1.95c-1.92,1.83-3.91,2.79-5.38,1.95s-1.62-3-1-5.63c-2.54-.75-4.37-2-4.37-3.68S3.08,9.07,5.62,8.32c-.62-2.58-.46-4.79,1-5.63s3.46.12,5.38,1.95c1.92-1.83,3.91-2.79,5.37-1.95M17.08,12A22.51,22.51,0,0,1,18,14.26c2.1-.63,3.28-1.53,3.28-2.26S20.07,10.37,18,9.74A22.51,22.51,0,0,1,17.08,12M6.92,12A22.51,22.51,0,0,1,6,9.74c-2.1.63-3.28,1.53-3.28,2.26S3.93,13.63,6,14.26A22.51,22.51,0,0,1,6.92,12m9,2.26-.3.51c.31,0,.61-.1.88-.16a7.91,7.91,0,0,0-.29-.86l-.29.51M13,18.3c1.59,1.5,3,2.08,3.59,1.7s.83-1.82.32-4a22.7,22.7,0,0,1-2.4.36A24.22,24.22,0,0,1,13,18.3M8.08,9.74l.3-.51c-.31,0-.61.1-.88.16a7.91,7.91,0,0,0,.29.86l.29-.51M11,5.7C9.38,4.2,8,3.62,7.37,4s-.82,1.82-.31,4a22.7,22.7,0,0,1,2.4-.36A24.22,24.22,0,0,1,11,5.7Z"/>
-</svg>
-)
-
-const TailwindIcon = () => (
+ )
+ 
+ const ReactIcon = (props: React.SVGProps<SVGSVGElement>) => (
    <svg
-      fill='currentColor'
-      width='800px'
-      height='800px'
-      viewBox='0 0 24 24'
-      xmlns='http://www.w3.org/2000/svg'
+     xmlns="http://www.w3.org/2000/svg"
+     width="24"
+     height="24"
+     viewBox="0 0 24 24"
+     fill="currentColor"
+     {...props}
    >
-      <path
-         fill-rule='evenodd'
-         clip-rule='evenodd'
-         d='M12 6.036c-2.667 0-4.333 1.325-5 3.976 1-1.325 2.167-1.822 3.5-1.491.761.189 1.305.738 1.906 1.345C13.387 10.855 14.522 12 17 12c2.667 0 4.333-1.325 5-3.976-1 1.325-2.166 1.822-3.5 1.491-.761-.189-1.305-.738-1.907-1.345-.98-.99-2.114-2.134-4.593-2.134zM7 12c-2.667 0-4.333 1.325-5 3.976 1-1.326 2.167-1.822 3.5-1.491.761.189 1.305.738 1.907 1.345.98.989 2.115 2.134 4.594 2.134 2.667 0 4.333-1.325 5-3.976-1 1.325-2.167 1.822-3.5 1.491-.761-.189-1.305-.738-1.906-1.345C10.613 13.145 9.478 12 7 12z'
-      />
+     <path d="M12,10.11A1.87,1.87,0,1,1,10.13,12,1.88,1.88,0,0,1,12,10.11M7.37,20c.63.38,2-.2,3.6-1.7a24.22,24.22,0,0,1-1.51-1.9A22.7,22.7,0,0,1,7.06,16c-.51,2.14-.32,3.61.31,4m.71-5.74-.29-.51a7.91,7.91,0,0,0-.29.86c.27.06.57.11.88.16l-.3-.51m6.54-.76.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17,9,12.6,9,12,9s-1.17,0-1.71,0c-.29.47-.61.94-.91,1.47L8.57,12l.81,1.5c.3.53.62,1,.91,1.47.54,0,1.11,0,1.71,0s1.17,0,1.71,0c.29-.47.61-.94.91-1.47M12,6.78c-.19.22-.39.45-.59.72h1.18c-.2-.27-.4-.5-.59-.72m0,10.44c.19-.22.39-.45.59-.72H11.41c.2.27.4.5.59.72M16.62,4c-.62-.38-2,.2-3.59,1.7a24.22,24.22,0,0,1,1.51,1.9,22.7,22.7,0,0,1,2.4.36c.51-2.14.32-3.61-.32-4m-.7,5.74.29.51a7.91,7.91,0,0,0,.29-.86c-.27-.06-.57-.11-.88-.16l.3.51m1.45-7c1.47.84,1.63,3.05,1,5.63,2.54.75,4.37,2,4.37,3.68s-1.83,2.93-4.37,3.68c.62,2.58.46,4.79-1,5.63s-3.45-.12-5.37-1.95c-1.92,1.83-3.91,2.79-5.38,1.95s-1.62-3-1-5.63c-2.54-.75-4.37-2-4.37-3.68S3.08,9.07,5.62,8.32c-.62-2.58-.46-4.79,1-5.63s3.46.12,5.38,1.95c1.92-1.83,3.91-2.79,5.37-1.95M17.08,12A22.51,22.51,0,0,1,18,14.26c2.1-.63,3.28-1.53,3.28-2.26S20.07,10.37,18,9.74A22.51,22.51,0,0,1,17.08,12M6.92,12A22.51,22.51,0,0,1,6,9.74c-2.1.63-3.28,1.53-3.28,2.26S3.93,13.63,6,14.26A22.51,22.51,0,0,1,6.92,12m9,2.26-.3.51c.31,0,.61-.1.88-.16a7.91,7.91,0,0,0-.29-.86l-.29.51M13,18.3c1.59,1.5,3,2.08,3.59,1.7s.83-1.82.32-4a22.7,22.7,0,0,1-2.4.36A24.22,24.22,0,0,1,13,18.3M8.08,9.74l.3-.51c-.31,0-.61.1-.88.16a7.91,7.91,0,0,0,.29.86l.29-.51M11,5.7C9.38,4.2,8,3.62,7.37,4s-.82,1.82-.31,4a22.7,22.7,0,0,1,2.4-.36A24.22,24.22,0,0,1,11,5.7Z" />
    </svg>
-)
-
-const ExpoIcon = () => (
+ )
+ 
+ const TailwindIcon = (props: React.SVGProps<SVGSVGElement>) => (
    <svg
-      fill='currentColor'
-      width='800px'
-      height='800px'
-      viewBox='0 0 24 24'
-      role='img'
-      xmlns='http://www.w3.org/2000/svg'
+     xmlns="http://www.w3.org/2000/svg"
+     width="24"
+     height="24"
+     viewBox="4 1 14 24"
+     fill="currentColor"
+     {...props}
    >
-      <path d='M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 0 1 1.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77z' />
+     <path
+       fillRule="evenodd"
+       clipRule="evenodd"
+       d="M12 6.036c-2.667 0-4.333 1.325-5 3.976 1-1.325 2.167-1.822 3.5-1.491.761.189 1.305.738 1.906 1.345C13.387 10.855 14.522 12 17 12c2.667 0 4.333-1.325 5-3.976-1 1.325-2.166 1.822-3.5 1.491-.761-.189-1.305-.738-1.907-1.345-.98-.99-2.114-2.134-4.593-2.134zM7 12c-2.667 0-4.333 1.325-5 3.976 1-1.326 2.167-1.822 3.5-1.491.761.189 1.305.738 1.907 1.345.98.989 2.115 2.134 4.594 2.134 2.667 0 4.333-1.325 5-3.976-1 1.325-2.167 1.822-3.5 1.491-.761-.189-1.305-.738-1.906-1.345C10.613 13.145 9.478 12 7 12z"
+     />
    </svg>
-)
+ )
+ 
+ const ExpoIcon = (props: React.SVGProps<SVGSVGElement>) => (
+   <svg
+     xmlns="http://www.w3.org/2000/svg"
+     width="24"
+     height="24"
+     viewBox="0 0 24 24"
+     fill="currentColor"
+     {...props}
+   >
+     <path d="M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 0 1 1.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77z" />
+   </svg>
+ )
 
 const ConvexIcon = () => (
-   <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='31 31.5 122 125'>
+   <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='31 31.5 140 130'>
       <path
          d='M108.092 130.021C126.258 128.003 143.385 118.323 152.815 102.167C148.349 142.128 104.653 167.385 68.9858 151.878C65.6992 150.453 62.8702 148.082 60.9288 145.034C52.9134 132.448 50.2786 116.433 54.0644 101.899C64.881 120.567 86.8748 132.01 108.092 130.021Z'
          fill='currentColor'
@@ -104,13 +113,19 @@ const ConvexIcon = () => (
    </svg>
 )
 
+const LaravelIcon = () => (
+   <svg xmlns='http://www.w3.org/2000/svg' width='800px' height='800px' viewBox='0 0 58 49' fill='currentColor'>
+      <path d='M49.626 11.564a.809.809 0 0 1 .028.209v10.972a.8.8 0 0 1-.402.694l-9.209 5.302V39.25c0 .286-.152.55-.4.694L20.42 51.01c-.044.025-.092.041-.14.058-.018.006-.035.017-.054.022a.805.805 0 0 1-.41 0c-.022-.006-.042-.018-.063-.026-.044-.016-.09-.03-.132-.054L.402 39.944A.801.801 0 0 1 0 39.25V6.334c0-.072.01-.142.028-.21.006-.023.02-.044.028-.067.015-.042.029-.085.051-.124.015-.026.037-.047.055-.071.023-.032.044-.065.071-.093.023-.023.053-.04.079-.06.029-.024.055-.05.088-.069h.001l9.61-5.533a.802.802 0 0 1 .8 0l9.61 5.533h.002c.032.02.059.045.088.068.026.02.055.038.078.06.028.029.048.062.072.094.017.024.04.045.054.071.023.04.036.082.052.124.008.023.022.044.028.068a.809.809 0 0 1 .028.209v20.559l8.008-4.611v-10.51c0-.07.01-.141.028-.208.007-.024.02-.045.028-.068.016-.042.03-.085.052-.124.015-.026.037-.047.054-.071.024-.032.044-.065.072-.093.023-.023.052-.04.078-.06.03-.024.056-.05.088-.069h.001l9.611-5.533a.801.801 0 0 1 .8 0l9.61 5.533c.034.02.06.045.09.068.025.02.054.038.077.06.028.029.048.062.072.094.018.024.04.045.054.071.023.039.036.082.052.124.009.023.022.044.028.068zm-1.574 10.718v-9.124l-3.363 1.936-4.646 2.675v9.124l8.01-4.611zm-9.61 16.505v-9.13l-4.57 2.61-13.05 7.448v9.216l17.62-10.144zM1.602 7.719v31.068L19.22 48.93v-9.214l-9.204-5.209-.003-.002-.004-.002c-.031-.018-.057-.044-.086-.066-.025-.02-.054-.036-.076-.058l-.002-.003c-.026-.025-.044-.056-.066-.084-.02-.027-.044-.05-.06-.078l-.001-.003c-.018-.03-.029-.066-.042-.1-.013-.03-.03-.058-.038-.09v-.001c-.01-.038-.012-.078-.016-.117-.004-.03-.012-.06-.012-.09v-.002-21.481L4.965 9.654 1.602 7.72zm8.81-5.994L2.405 6.334l8.005 4.609 8.006-4.61-8.006-4.608zm4.164 28.764l4.645-2.674V7.719l-3.363 1.936-4.646 2.675v20.096l3.364-1.937zM39.243 7.164l-8.006 4.609 8.006 4.609 8.005-4.61-8.005-4.608zm-.801 10.605l-4.646-2.675-3.363-1.936v9.124l4.645 2.674 3.364 1.937v-9.124zM20.02 38.33l11.743-6.704 5.87-3.35-8-4.606-9.211 5.303-8.395 4.833 7.993 4.524z' />
+   </svg>
+)
+
 const workItems: WorkItem[] = [
    {
       id: 'artsphere-layout',
-      section: 'designs',
+      section: 'visuals',
       category: 'Layouts',
-      title: 'The ArtSphere',
-      image: '/artsphere.png',
+      title: 'ArtSphere',
+      image: '/artsphere1.png',
       alt: 'The ArtSphere thumbnail',
       description: 'The ArtSphere · School Project · 2024',
       embedUrl:
@@ -120,10 +135,10 @@ const workItems: WorkItem[] = [
    },
    {
       id: 'slicehaus-layout',
-      section: 'designs',
+      section: 'visuals',
       category: 'Layouts',
       title: 'Slicehaus',
-      image: '/slicehaus.png',
+      image: '/slicehaus1.png',
       alt: 'Slicehaus logo',
       description: 'Slicehaus · School Project · 2025',
       embedUrl:
@@ -133,10 +148,10 @@ const workItems: WorkItem[] = [
    },
    {
       id: 'bondbook-layout',
-      section: 'designs',
+      section: 'visuals',
       category: 'Layouts',
       title: 'BondBook',
-      image: '/bondbook.png',
+      image: '/bondbook1.png',
       alt: 'BondBook layout thumbnail',
       description: 'BondBook · School Project · 2024',
       embedUrl:
@@ -146,7 +161,7 @@ const workItems: WorkItem[] = [
    },
    {
       id: 'technoday-poster',
-      section: 'designs',
+      section: 'visuals',
       category: 'Posters',
       title: 'Technoday',
       image: '/technoday.png',
@@ -157,7 +172,7 @@ const workItems: WorkItem[] = [
    },
    {
       id: 'whywait-poster',
-      section: 'designs',
+      section: 'visuals',
       category: 'Posters',
       title: 'Why Wait?',
       image: '/whywait.png',
@@ -170,54 +185,54 @@ const workItems: WorkItem[] = [
       aspectRatio: 16 / 9,
    },
    {
-      id: 'resto-poster',
-      section: 'designs',
-      category: 'Posters',
+      id: 'resto-artwork',
+      section: 'visuals',
+      category: 'Artworks',
       title: 'Resto',
       image: '/resto.png',
-      alt: 'Resto poster thumbnail',
+      alt: 'Resto artwork thumbnail',
       description: 'Resto · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 16 / 9,
    },
    {
-      id: 'jane-poster',
-      section: 'designs',
-      category: 'Posters',
+      id: 'jane-artwork',
+      section: 'visuals',
+      category: 'Artworks',
       title: 'Jane',
       image: '/jane9.png',
-      alt: 'Jane poster thumbnail',
+      alt: 'Jane artwork thumbnail',
       description: 'Jane · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 16 / 9,
    },
    {
-      id: 'never-happened-poster',
-      section: 'designs',
-      category: 'Posters',
+      id: 'never-happened-artwork',
+      section: 'visuals',
+      category: 'Artworks',
       title: 'Never Happened',
       image: '/neverhappened.png',
-      alt: 'Never Happened poster thumbnail',
+      alt: 'Never Happened artwork thumbnail',
       description: 'Never Happened · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 2 / 3,
    },
    {
-      id: 'juliana-poster',
-      section: 'designs',
-      category: 'Posters',
+      id: 'juliana-artwork',
+      section: 'visuals',
+      category: 'Artworks',
       title: 'Juliana',
       image: '/juliana.png',
-      alt: 'Juliana poster thumbnail',
+      alt: 'Juliana artwork thumbnail',
       description: 'Juliana · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
       aspectRatio: 2 / 3,
    },
    {
       id: 'varre-poster',
-      section: 'designs',
+      section: 'visuals',
       category: 'Posters',
-      title: "Who's Behind the Mask?",
+      title: 'Varre',
       image: '/whosbehindthemask.png',
       alt: 'Varre poster thumbnail',
       description: "Who's Behind the Mask · School Project · Poster Design",
@@ -229,7 +244,7 @@ const workItems: WorkItem[] = [
    },
    {
       id: 'cleanrasdasdot-poster',
-      section: 'designs',
+      section: 'visuals',
       category: 'Posters',
       title: 'Cleanrot',
       image: '/cleanrot7.png',
@@ -241,13 +256,13 @@ const workItems: WorkItem[] = [
    {
       id: 'eResq-app',
       section: 'projects',
-      category: 'Apps',
+      category: 'Systems',
       title: 'e-ResQ',
       image: '/eresq.png',
       video: '/eresq.mp4',
       thumbnail: '/eresqsummary.mp4',
-      alt: 'e-ResQ app thumbnail',
-      description: 'Portfolio · Capstone Project',
+      alt: 'e-ResQ System thumbnail',
+      description: 'Portfolio · Capstone Project · 2025',
       tags: [
          { label: 'React', icon: ReactIcon },
          { label: 'Tailwind', icon: TailwindIcon },
@@ -259,18 +274,25 @@ const workItems: WorkItem[] = [
    {
       id: 'casa-app',
       section: 'projects',
-      category: 'Apps',
-      title: 'Hotel Management System',
-      image: '/cleanrot7.png',
-      alt: 'Cleanrot poster thumbnail',
-      description: 'Cleanrot · Poster Design',
-      tags: [{ label: 'Photoshop', icon: Wallpaper }],
-      aspectRatio: 9 / 16,
+      category: 'Systems',
+      title: 'Booking System',
+      image: '/casatmb.png',
+      video: '/casa.mp4',
+      thumbnail: '/casapreview.mp4',
+      alt: 'Booking System thumbnail',
+      description: 'Casa Jedliana · OJT Project · 2026',
+      tags: [
+         { label: 'Laravel', icon: LaravelIcon },
+         { label: 'React', icon: ReactIcon },
+         { label: 'Tailwind', icon: TailwindIcon },
+         { label: 'MySQL', icon: Database },
+      ],
+      aspectRatio: 16 / 10,
    },
 ]
 
 const sections: Array<{ id: SectionId; label: string }> = [
-   { id: 'designs', label: 'Designs' },
+   { id: 'visuals', label: 'Visuals' },
    { id: 'projects', label: 'Projects' },
 ]
 
@@ -292,26 +314,26 @@ function ItemPreview({ item }: { item: WorkItem }) {
       const [popOpen, setPopOpen] = useState(false)
 
       return (
-        <div className='flex flex-col gap-4'>
-          <div
-            className="cursor-pointer overflow-hidden rounded-lg"
-            style={{ aspectRatio: item.aspectRatio }}
-            onClick={() => setPopOpen(true)}
-          >
-            {/* thumbnail — still autoPlay muted loop */}
-            <video autoPlay muted playsInline loop
-              className="h-full w-full object-cover"
-              src={item.thumbnail || item.video}
-            />
-          </div>
-      
-          <VideoPopOver
-            src={item.video}
-            open={popOpen}
-            onClose={() => setPopOpen(false)}
-          />
-          <p className='text-lg font-medium pb-4'>{item.description}</p>
-        </div>
+         <div className='flex flex-col gap-4'>
+            <div
+               className='cursor-pointer overflow-hidden rounded-lg'
+               style={{ aspectRatio: item.aspectRatio }}
+               onClick={() => setPopOpen(true)}
+            >
+               {/* thumbnail — still autoPlay muted loop */}
+               <video
+                  autoPlay
+                  muted
+                  playsInline
+                  loop
+                  className='h-full w-full object-cover'
+                  src={item.thumbnail || item.video}
+               />
+            </div>
+
+            <VideoPopOver src={item.video} open={popOpen} onClose={() => setPopOpen(false)} />
+            <p className='text-lg font-medium pb-4'>{item.description}</p>
+         </div>
       )
    }
 
@@ -370,9 +392,60 @@ function ItemTags({ item }: { item: WorkItem }) {
    )
 }
 
+function WorkItemButton({
+   item,
+   isSelected,
+   onSelect,
+}: {
+   item: WorkItem
+   isSelected: boolean
+   onSelect: (item: WorkItem) => void
+}) {
+   const [isHovered, setIsHovered] = useState(false)
+
+   return (
+      <Button
+         type='button'
+         variant='ghost'
+         className={cn(
+            'group relative w-full h-14 overflow-hidden rounded-md p-0 border-0',
+            isSelected && 'shadow-2xl'
+         )}
+         aria-pressed={isSelected}
+         onClick={() => onSelect(item)}
+         onMouseEnter={() => setIsHovered(true)}
+         onMouseLeave={() => setIsHovered(false)}
+      >
+         <img className='absolute inset-0 h-full w-full object-cover' src={item.image} alt={item.alt} />
+
+         {/* Overlay: invisible by default, darkens on hover */}
+         <div
+            className={cn(
+               'absolute inset-0 bg-white dark:bg-black transition-opacity duration-500',
+               isHovered ? 'opacity-70' : 'opacity-80',
+               isSelected && 'opacity-0'
+            )}
+         />
+
+         {/* Text: hidden by default, fades in on hover */}
+         <div
+            className={cn(
+               'relative z-10 flex h-full w-full items-center justify-center px-2 transition-opacity duration-500 dark:text-white text-black',
+               isHovered ? 'opacity-100' : 'opacity-0',
+               isSelected && 'opacity-0'
+            )}
+         >
+            <TextRoll animate={isHovered ? 'hovered' : 'initial'} className='font-semibold lg:font-bold text-xl uppercase'>
+               {item.title}
+            </TextRoll>
+         </div>
+      </Button>
+   )
+}
+
 export function ResizableMain() {
-   const [activeSection, setActiveSection] = useState<SectionId>('designs')
-   const [selectedItemId, setSelectedItemId] = useState(getDefaultItem('designs').id)
+   const [activeSection, setActiveSection] = useState<SectionId>('visuals')
+   const [selectedItemId, setSelectedItemId] = useState(getDefaultItem('visuals').id)
 
    const selectedItem = workItems.find((item) => item.id === selectedItemId) ?? getDefaultItem(activeSection)
    const sectionItems = useMemo(() => workItems.filter((item) => item.section === activeSection), [activeSection])
@@ -435,42 +508,26 @@ export function ResizableMain() {
                </div>
             </Card>
 
-            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden lg:rounded-tr-[4em] rounded-br-[4em] shadow-lg order-1 lg:order-2'>
-               <ScrollArea className='h-full px-4'>
-                  {Object.entries(sidebarCategories).map(([category, items], index) => (
-                     <div key={category} className='space-y-2 py-4'>
-                        {index > 0 && <Separator />}
-                        <p className='text-sm font-medium text-muted-foreground'>{category}</p>
-                        <div className='space-y-1'>
-                           {items.map((item) => (
-                              <Button
-                                 key={item.id}
-                                 type='button'
-                                 variant='ghost'
-                                 className={cn(
-                                    'h-auto w-full justify-start gap-2 px-2 py-2 text-left ',
-                                    selectedItem.id === item.id && 'bg-primary dark:text-foreground text-accent-foreground hover:bg-accent'
-                                 )}
-                                 aria-pressed={selectedItem.id === item.id}
-                                 onClick={() => handleItemSelect(item)}
-                              >
-                                 <img className='size-10 rounded-md object-cover' src={item.image} alt={item.alt} />
-                                 <span className='min-w-0 truncate'>{item.title}</span>
-                              </Button>
-                           ))}
+            <Card className='flex-4 min-h-0 border-none py-0 overflow-hidden lg:rounded-tr-[4em] rounded-br-[4em] shadow-lg order-1 lg:order-2 w-full'>
+               <ScrollArea className='h-full w-full'>
+                  <div className='px-4 w-full'>
+                     {Object.entries(sidebarCategories).map(([category, items], index) => (
+                        <div key={category} className='space-y-2 py-4 w-full'>
+                           {index > 0 && <Separator />}
+                           <p className='text-sm font-medium text-muted-foreground'>{category}</p>
+                           <div className='space-y-2 w-full'>
+                              {items.map((item) => (
+                                 <WorkItemButton
+                                    key={item.id}
+                                    item={item}
+                                    isSelected={selectedItem.id === item.id}
+                                    onSelect={handleItemSelect}
+                                 />
+                              ))}
+                           </div>
                         </div>
-                     </div>
-                  ))}
-                  {/* <GradualBlurMemo
-                     target='parent'
-                     position='bottom'
-                     height='1rem'
-                     strength={1}
-                     divCount={6}
-                     curve='bezier'
-                     exponential
-                     opacity={1}
-                  /> */}
+                     ))}
+                  </div>
                </ScrollArea>
             </Card>
          </div>

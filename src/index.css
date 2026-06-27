@@ -238,6 +238,11 @@ body {
   letter-spacing: var(--tracking-normal);
 }
 
+[data-radix-scroll-area-viewport] > div {
+  width: 100% !important;
+  display: block !important;
+}
+
 /* Scroll Fade Effect */
 /* @supports (animation-timeline: scroll()) {
   @property --ft {
