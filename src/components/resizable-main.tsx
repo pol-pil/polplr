@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
-import { Code2, Database, Eye, SquareTerminal, Wallpaper } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Database, SquareTerminal, Wallpaper } from 'lucide-react'
+import { Tabs, TabsContent} from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
