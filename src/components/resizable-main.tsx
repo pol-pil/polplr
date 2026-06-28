@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from 'react'
-import { Database, SquareTerminal, Wallpaper } from 'lucide-react'
-import { Tabs, TabsContent} from '@/components/ui/tabs'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Database, Maximize, Minimize, SquareTerminal, Wallpaper } from 'lucide-react'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -12,6 +12,8 @@ import { Avatar, AvatarImage } from './ui/avatar'
 import { VideoPopOver } from './video-popover'
 import { TextRoll } from './ui/skiper-ui/skiper58'
 import Dock from './Dock'
+import { Spinner } from './ui/spinner'
+import { ModeToggle } from './mode-toggle'
 
 type SectionId = 'visuals' | 'projects'
 
@@ -106,6 +108,7 @@ const workItems: WorkItem[] = [
       category: 'Layouts',
       title: 'ArtSphere',
       image: '/artsphere1.avif',
+      thumbnail: '/artspherepreview.avif',
       alt: 'The ArtSphere thumbnail',
       description: 'The ArtSphere · School Project · 2024',
       embedUrl:
@@ -119,6 +122,7 @@ const workItems: WorkItem[] = [
       category: 'Layouts',
       title: 'Slicehaus',
       image: '/slicehaus1.avif',
+      thumbnail: '/slicehauspreview.avif',
       alt: 'Slicehaus logo',
       description: 'Slicehaus · School Project · 2025',
       embedUrl:
@@ -132,6 +136,7 @@ const workItems: WorkItem[] = [
       category: 'Layouts',
       title: 'BondBook',
       image: '/bondbook1.avif',
+      thumbnail: '/bondbookpreview.avif',
       alt: 'BondBook layout thumbnail',
       description: 'BondBook · School Project · 2024',
       embedUrl:
@@ -289,10 +294,50 @@ function getItemsByCategory(items: WorkItem[]) {
 
 function ItemPreview({ item }: { item: WorkItem }) {
    const isPortrait = item.aspectRatio < 1
+   const [popOpen, setPopOpen] = useState(false)
+   const [isLoaded, setIsLoaded] = useState(false)
+   const [isFullscreen, setIsFullscreen] = useState(false)
+   const iframeRef = useRef<HTMLIFrameElement>(null)
+   const containerRef = useRef<HTMLDivElement>(null)
+
+   useEffect(() => {
+      const handler = () => setIsFullscreen(!!document.fullscreenElement)
+      document.addEventListener('fullscreenchange', handler)
+      return () => document.removeEventListener('fullscreenchange', handler)
+   }, [])
+
+   useEffect(() => {
+      if (!item.embedUrl) return
+      setIsLoaded(false)
+
+      const handler = (e: MessageEvent) => {
+         if (e.origin !== 'https://www.figma.com') return
+         if (e.data?.type === 'INITIAL_LOAD') {
+            setTimeout(() => setIsLoaded(true), 300)
+         }
+      }
+
+      window.addEventListener('message', handler)
+      const fallback = setTimeout(() => setIsLoaded(true), 8000)
+
+      return () => {
+         window.removeEventListener('message', handler)
+         clearTimeout(fallback)
+      }
+   }, [item.embedUrl])
+
+   function toggleFullscreen() {
+      const el = containerRef.current
+      if (!el) return
+
+      if (!document.fullscreenElement) {
+         el.requestFullscreen?.()
+      } else {
+         document.exitFullscreen?.()
+      }
+   }
 
    if (item.video) {
-      const [popOpen, setPopOpen] = useState(false)
-
       return (
          <div className='flex flex-col gap-4'>
             <div
@@ -300,7 +345,6 @@ function ItemPreview({ item }: { item: WorkItem }) {
                style={{ aspectRatio: item.aspectRatio }}
                onClick={() => setPopOpen(true)}
             >
-               {/* thumbnail — still autoPlay muted loop */}
                <video
                   autoPlay
                   muted
@@ -310,31 +354,98 @@ function ItemPreview({ item }: { item: WorkItem }) {
                   src={item.thumbnail || item.video}
                />
             </div>
-
             <VideoPopOver src={item.video} open={popOpen} onClose={() => setPopOpen(false)} />
             <p className='text-lg font-medium pb-4'>{item.description}</p>
          </div>
       )
    }
 
+   const thumbnailOverlay = (
+      <div
+         style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            borderRadius: '0.5rem',
+            overflow: 'hidden',
+            transition: 'opacity 0.4s ease',
+            opacity: isLoaded ? 0 : 1,
+            pointerEvents: isLoaded ? 'none' : 'auto',
+         }}
+      >
+         <img src={item.thumbnail} alt='' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+         <div
+            style={{
+               position: 'absolute',
+               inset: 0,
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               background: 'rgba(0,0,0,0.2)',
+            }}
+         >
+            <Spinner />
+         </div>
+      </div>
+   )
+
+   const fullscreenButton = isLoaded && (
+      <button
+         onClick={toggleFullscreen}
+         style={{
+            position: 'absolute',
+            bottom: 8,
+            right: 8,
+            zIndex: 10,
+         }}
+         className='rounded-md bg-black/50 p-1.5 text-white hover:bg-black/70 backdrop-blur-sm'
+      >
+         {isFullscreen ? <Minimize className='size-4' /> : <Maximize className='size-4' />}
+      </button>
+   )
+
    return (
       <div className='flex h-full flex-col gap-4'>
          {item.embedUrl ? (
             isPortrait ? (
                <div className='flex justify-center'>
-                  <iframe
-                     className='rounded-lg'
+                  <div
+                     ref={containerRef}
                      style={{
-                        height: 'min(80vh, 90vw / ' + item.aspectRatio + ')',
-                        width: `min(90vw, min(80vh, 90vw / ${item.aspectRatio}) * ${item.aspectRatio})`,
+                        position: 'relative',
+                        ...(isFullscreen && {
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                           width: '100%',
+                           height: '100%',
+                           background: 'black',
+                        }),
                      }}
-                     src={item.embedUrl}
-                     title={item.title}
-                  />
+                  >
+                     {thumbnailOverlay}
+                     <iframe
+                        ref={iframeRef}
+                        className='rounded-lg'
+                        style={{
+                           height: `min(80vh, 90vw / ${item.aspectRatio})`,
+                           width: `min(90vw, min(80vh, 90vw / ${item.aspectRatio}) * ${item.aspectRatio})`,
+                        }}
+                        src={item.embedUrl}
+                        title={item.title}
+                     />
+                     {fullscreenButton}
+                  </div>
                </div>
             ) : (
-               <div className='w-full overflow-hidden rounded-lg' style={{ aspectRatio: item.aspectRatio }}>
-                  <iframe className='h-full w-full rounded-lg' src={item.embedUrl} title={item.title} />
+               <div
+                  ref={containerRef}
+                  className='w-full overflow-hidden rounded-lg'
+                  style={{ position: 'relative', aspectRatio: item.aspectRatio }}
+               >
+                  {thumbnailOverlay}
+                  <iframe ref={iframeRef} className='h-full w-full rounded-lg' src={item.embedUrl} title={item.title} />
+                  {fullscreenButton}
                </div>
             )
          ) : isPortrait ? (
@@ -457,17 +568,32 @@ export function ResizableMain() {
       }
    }
 
-   const tabs = sections.map((section) => ({
-      icon: section.id === 'visuals' ? <Wallpaper className='size-5'/> : <SquareTerminal className='size-5'/>,
-      label: section.label,
-      className: 'rounded-lg border-[1px]',
-      isActive: activeSection === section.id,
-      onClick: () => handleSectionChange(section.id),
-   }))
+   const tabs = [
+      ...sections.map((section) => ({
+         icon: section.id === 'visuals' ? <Wallpaper className='size-5' /> : <SquareTerminal className='size-5' />,
+         label: section.label,
+         className: 'rounded-lg border-[1px]',
+         isActive: activeSection === section.id,
+         onClick: () => handleSectionChange(section.id),
+      })),
+      {
+         icon: <ModeToggle />,
+         label: 'Theme',
+         className: 'rounded-full border-[1px] border-none shadow-none',
+         isActive: false,
+         onClick: () => {},
+      },
+   ]
 
    return (
       <div className='lg:flex gap-2 space-y-2 h-full text-foreground'>
-         <Dock items={tabs} className='fixed z-20 dark:border-[1px] border-none shadow-xl text-white dark:bg-neutral-900 bg-neutral-100' panelHeight={70} baseItemSize={50} magnification={60}/>
+         <Dock
+            items={tabs}
+            className='fixed z-20 dark:border-[1px] border-none shadow-xl text-white dark:bg-neutral-900 bg-neutral-50'
+            panelHeight={70}
+            baseItemSize={50}
+            magnification={60}
+         />
          <Card className='min-w-0 flex-1 lg:h-full border-none p-0 overflow-hidden shadow-lg'>
             <Tabs value={activeSection} onValueChange={handleSectionChange} className='h-full'>
                {sections.map((section) => (

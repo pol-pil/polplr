@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { GripHorizontal, RefreshCcw } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -194,11 +194,24 @@ export const ThemeToggleButton1 = ({
 
 //..................................................... //
 export const ThemeToggleButton2 = ({
-  className = "",
+  className = '',
 }: {
-  className?: string;
+  className?: string
 }) => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(
+     () => document.documentElement.classList.contains('dark')
+  )
+
+  useEffect(() => {
+     const observer = new MutationObserver(() => {
+        setIsDark(document.documentElement.classList.contains('dark'))
+     })
+     observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+     })
+     return () => observer.disconnect()
+  }, [])
   return (
     <button
       type="button"
