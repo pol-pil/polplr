@@ -105,7 +105,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Layouts',
       title: 'ArtSphere',
-      image: '/artsphere1.jpeg',
+      image: '/artsphere1.avif',
       alt: 'The ArtSphere thumbnail',
       description: 'The ArtSphere · School Project · 2024',
       embedUrl:
@@ -118,7 +118,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Layouts',
       title: 'Slicehaus',
-      image: '/slicehaus1.jpeg',
+      image: '/slicehaus1.avif',
       alt: 'Slicehaus logo',
       description: 'Slicehaus · School Project · 2025',
       embedUrl:
@@ -131,7 +131,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Layouts',
       title: 'BondBook',
-      image: '/bondbook1.jpeg',
+      image: '/bondbook1.avif',
       alt: 'BondBook layout thumbnail',
       description: 'BondBook · School Project · 2024',
       embedUrl:
@@ -144,7 +144,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Posters',
       title: 'Technoday',
-      image: '/technoday.jpeg',
+      image: '/technoday.avif',
       alt: 'Technoday poster thumbnail',
       description: 'Technoday · Event Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
@@ -155,7 +155,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Posters',
       title: 'Why Wait?',
-      image: '/whywait.jpeg',
+      image: '/whywait.avif',
       alt: 'Why Wait poster thumbnail',
       description: 'Why · Poster Design',
       tags: [
@@ -169,7 +169,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Artworks',
       title: 'Resto',
-      image: '/resto.jpeg',
+      image: '/resto.avif',
       alt: 'Resto artwork thumbnail',
       description: 'Resto · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
@@ -180,7 +180,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Artworks',
       title: 'Jane',
-      image: '/jane9.jpeg',
+      image: '/jane9.avif',
       alt: 'Jane artwork thumbnail',
       description: 'Jane · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
@@ -191,7 +191,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Artworks',
       title: 'Mirror',
-      image: '/neverhappened.jpeg',
+      image: '/neverhappened.avif',
       alt: 'Mirror artwork thumbnail',
       description: 'Mirror · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
@@ -202,7 +202,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Artworks',
       title: 'Juliana',
-      image: '/juliana.jpeg',
+      image: '/juliana.avif',
       alt: 'Juliana artwork thumbnail',
       description: 'Juliana · Digital Art',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
@@ -213,7 +213,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Posters',
       title: 'Varre',
-      image: '/whosbehindthemask.jpeg',
+      image: '/whosbehindthemask.avif',
       alt: 'Varre poster thumbnail',
       description: "Who's Behind the Mask · School Project · Poster Design",
       tags: [
@@ -227,7 +227,7 @@ const workItems: WorkItem[] = [
       section: 'visuals',
       category: 'Posters',
       title: 'Cleanrot',
-      image: '/cleanrot7.jpeg',
+      image: '/cleanrot7.avif',
       alt: 'Cleanrot poster thumbnail',
       description: 'Cleanrot · Poster Design',
       tags: [{ label: 'Photoshop', icon: Wallpaper }],
@@ -238,7 +238,7 @@ const workItems: WorkItem[] = [
       section: 'projects',
       category: 'Systems',
       title: 'e-ResQ',
-      image: '/eresq.jpeg',
+      image: '/eresq.avif',
       video: '/eresq.mp4',
       thumbnail: '/eresqsummary.mp4',
       alt: 'e-ResQ System thumbnail',
@@ -256,7 +256,7 @@ const workItems: WorkItem[] = [
       section: 'projects',
       category: 'Systems',
       title: 'Booking System',
-      image: '/casatmb.jpeg',
+      image: '/casatmb.avif',
       video: '/casa.mp4',
       thumbnail: '/casapreview.mp4',
       alt: 'Booking System thumbnail',
@@ -486,7 +486,7 @@ export function ResizableMain() {
             <Card className='flex-1 border-none lg:rounded-br-[4em] rounded-tr-[4em] shadow-lg order-2 lg:order-1'>
                <div className='flex h-full flex-col items-center justify-center gap-3 p-6 text-center'>
                   <Avatar size='lg'>
-                     <AvatarImage src='/polpr.jpeg' alt='Paul Pilar' />
+                     <AvatarImage src='/polpr.avif' alt='Paul Pilar' />
                   </Avatar>
                   <span className='font-semibold'>@pol.plr</span>
                </div>
