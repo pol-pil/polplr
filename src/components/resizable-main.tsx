@@ -101,6 +101,20 @@ const LaravelIcon = () => (
    </svg>
 )
 
+const IonicIcon = () => (
+   <svg width='800px' height='800px' viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg' fill='currentColor'>
+      <g>
+         <path d='M128.151659,0.00118559798 C148.92891,0.00118559798 168.492891,4.85546114 186.843602,14.2583047 L186.843602,14.2583047 L189.270142,15.4715749 L187.146919,17.1398213 C181.990521,21.2346081 177.895735,26.5426649 175.317536,32.6090156 L175.317536,32.6090156 L174.559242,34.2772621 L173.042654,33.5189682 C158.938389,26.8459825 143.924171,23.3578308 128.303318,23.3578308 C70.521327,23.3578308 23.6587678,70.3720488 23.6587678,128.002381 C23.6587678,185.632712 70.3696682,232.64693 128.151659,232.64693 C185.933649,232.64693 232.796209,185.632712 232.796209,128.002381 C232.796209,114.201433 230.218009,100.703802 224.758294,87.9644659 L224.758294,87.9644659 L224,86.2962194 L225.668246,85.5379256 C231.886256,83.2630441 237.345972,79.4715749 241.744076,74.6184943 L241.744076,74.6184943 L243.412322,72.4952716 L244.473934,74.9218119 C252.208531,91.7559351 256,109.65167 256,127.699063 C256,198.22039 198.521327,255.699063 128,255.699063 C57.478673,255.699063 0,198.22039 0,127.699063 C0,57.177736 57.478673,-0.300936964 128.151659,0.00118559798 Z M128.151659,69.7654137 C160.151659,69.7654137 186.388626,95.8507218 186.540284,128.154039 C186.540284,160.457357 160.454976,186.542665 128.151659,186.542665 C95.8483412,186.542665 69.7630332,160.457357 69.7630332,128.154039 C69.7630332,95.8507218 96,69.7654137 128.151659,69.7654137 Z M211.71564,21.5379256 C226.457193,21.5379256 238.407583,33.4883156 238.407583,48.2298687 C238.407583,62.9714219 226.457193,74.9218119 211.71564,74.9218119 C196.974087,74.9218119 185.023697,62.9714219 185.023697,48.2298687 C185.023697,33.4883156 196.974087,21.5379256 211.71564,21.5379256 Z'></path>
+      </g>
+   </svg>
+)
+
+const AngularIcon = () => (
+   <svg width='800px' height='800px' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' fill='currentColor'>
+      <path d='M24.826 23.885h-3.297l-1.777-4.377h-7.507l-1.777 4.379h-3.299l8.83-19.571zM15.999 1.004l-14.145 4.976 2.157 18.458 11.989 6.557 11.992-6.551 2.154-18.462-14.147-4.977zM13.414 16.806h5.171l-2.587-6.133z'></path>
+   </svg>
+)
+
 const workItems: WorkItem[] = [
    {
       id: 'artsphere-layout',
@@ -274,6 +288,22 @@ const workItems: WorkItem[] = [
       ],
       aspectRatio: 16 / 10,
    },
+   {
+      id: 'ipundar-app',
+      section: 'projects',
+      category: 'Systems',
+      title: 'Budgeting App',
+      image: '/ipundar.avif',
+      video: '/ipundar.mp4',
+      thumbnail: '/ipundar.mp4',
+      alt: 'Budgeting System thumbnail',
+      description: 'iPundar · School Project · 2024',
+      tags: [
+         { label: 'Ionic', icon: IonicIcon },
+         { label: 'Angular', icon: AngularIcon },
+      ],
+      aspectRatio: 9 / 18.5,
+   },
 ]
 
 const sections: Array<{ id: SectionId; label: string }> = [
@@ -340,22 +370,46 @@ function ItemPreview({ item }: { item: WorkItem }) {
    if (item.video) {
       return (
          <div className='flex flex-col gap-4'>
-            <div
-               className='cursor-pointer overflow-hidden rounded-lg'
-               style={{ aspectRatio: item.aspectRatio }}
-               onClick={() => setPopOpen(true)}
-            >
-               <video
-                  autoPlay
-                  muted
-                  playsInline
-                  loop
-                  className='h-full w-full object-cover'
-                  src={item.thumbnail || item.video}
-               />
-            </div>
-            <VideoPopOver src={item.video} open={popOpen} onClose={() => setPopOpen(false)} />
-            <p className='text-lg font-medium pb-4'>{item.description}</p>
+            {isPortrait ? (
+               <div className='flex justify-center' onClick={() => setPopOpen(true)}>
+                  <div
+                     className='cursor-pointer overflow-hidden rounded-lg'
+                     style={{
+                        height: `min(80vh, 90vw / ${item.aspectRatio})`,
+                        width: `min(90vw, min(80vh, 90vw / ${item.aspectRatio}) * ${item.aspectRatio})`,
+                     }}
+                  >
+                     <video
+                        autoPlay
+                        muted
+                        playsInline
+                        loop
+                        className='h-full w-full object-cover'
+                        src={item.thumbnail || item.video}
+                     />
+                  </div>
+               </div>
+            ) : (
+               <div
+                  className='cursor-pointer overflow-hidden rounded-lg'
+                  style={{ aspectRatio: item.aspectRatio }}
+                  onClick={() => setPopOpen(true)}
+               >
+                  <video
+                     autoPlay
+                     muted
+                     playsInline
+                     loop
+                     className='h-full w-full object-cover'
+                     src={item.thumbnail || item.video}
+                  />
+               </div>
+            )}
+            <VideoPopOver src={item.video} open={popOpen} onClose={() => setPopOpen(false)} aspectRatio={item.aspectRatio}/>
+            <div className='flex flex-row justify-between items-center pb-4'>
+            <p className='text-lg font-medium'>{item.description}</p>
+            <ItemTags item={item} />
+         </div>
          </div>
       )
    }

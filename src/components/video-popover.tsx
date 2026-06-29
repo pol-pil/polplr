@@ -15,6 +15,7 @@ interface VideoPopOverProps {
   src: string
   open: boolean
   onClose: () => void
+  aspectRatio?: number
   showMute?: boolean
   autoPlay?: boolean
 }
@@ -33,9 +34,24 @@ export function VideoPopOver({
   src,
   open,
   onClose,
+  aspectRatio,
   showMute = true,
   autoPlay = true,
 }: VideoPopOverProps) {
+  const ratio = aspectRatio ?? 16 / 9
+  const isPortrait = ratio < 1
+
+  const panelStyle = isPortrait
+    ? {
+        height: 'min(90vh, 100vw)',
+        width: `min(100vw, min(90vh, 100vw) * ${ratio})`,
+      }
+    : {
+        width: '100%',
+        maxWidth: '80rem',
+        aspectRatio: ratio,
+      }
+
   return (
     <AnimatePresence>
       {open && (
@@ -64,7 +80,8 @@ export function VideoPopOver({
               },
             }}
             transition={SPRING}
-            className="relative aspect-video w-full max-w-7xl"
+            className="relative"
+            style={panelStyle}
           >
             <VideoPlayer style={{ width: '100%', height: '100%' }}>
               <VideoPlayerContent
@@ -75,7 +92,6 @@ export function VideoPopOver({
                 style={{ width: '100%', height: '100%' }}
               />
 
-              {/* Close button */}
               <span
                 onClick={onClose}
                 className="absolute right-2 top-2 z-10 cursor-pointer rounded-full p-1"
