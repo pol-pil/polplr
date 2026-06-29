@@ -42,15 +42,16 @@ export function VideoPopOver({
   const isPortrait = ratio < 1
 
   const panelStyle = isPortrait
-    ? {
-        height: 'min(90vh, 100vw)',
-        width: `min(100vw, min(90vh, 100vw) * ${ratio})`,
-      }
-    : {
-        width: '100%',
-        maxWidth: '80rem',
-        aspectRatio: ratio,
-      }
+  ? {
+      width: 'min(95vw, 40vh)',
+      height: `calc(min(95vw, 40vh) / ${ratio})`,
+      maxHeight: '95vh',
+    }
+  : {
+      width: '100%',
+      maxWidth: '80rem',
+      aspectRatio: ratio,
+    }
 
   return (
     <AnimatePresence>
