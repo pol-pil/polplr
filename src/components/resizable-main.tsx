@@ -261,7 +261,7 @@ const workItems: WorkItem[] = [
       video: '/eresq.mp4',
       thumbnail: '/eresqsummary.mp4',
       alt: 'e-ResQ System thumbnail',
-      description: 'Portfolio · Capstone Project · 2025',
+      description: 'e-ResQ · Best Capstone Project Award - Gold (Web Systems Technology) · 2025',
       tags: [
          { label: 'React', icon: ReactIcon },
          { label: 'Tailwind', icon: TailwindIcon },
